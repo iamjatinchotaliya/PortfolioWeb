@@ -1,0 +1,142 @@
+{
+  "categories": [
+    {
+      "name": "Frontend Development",
+      "icon": "web",
+      "skills": [
+        {
+          "name": "Flutter",
+          "level": 95,
+          "icon": "flutter",
+          "color": "#02569B"
+        },
+        {
+          "name": "React",
+          "level": 90,
+          "icon": "react",
+          "color": "#61DAFB"
+        },
+        {
+          "name": "Vue.js",
+          "level": 85,
+          "icon": "vuejs",
+          "color": "#4FC08D"
+        },
+        {
+          "name": "HTML/CSS",
+          "level": 95,
+          "icon": "html",
+          "color": "#E34F26"
+        },
+        {
+          "name": "TypeScript",
+          "level": 88,
+          "icon": "typescript",
+          "color": "#3178C6"
+        }
+      ]
+    },
+    {
+      "name": "Backend Development",
+      "icon": "server",
+      "skills": [
+        {
+          "name": "Node.js",
+          "level": 90,
+          "icon": "nodejs",
+          "color": "#339933"
+        },
+        {
+          "name": "Python",
+          "level": 85,
+          "icon": "python",
+          "color": "#3776AB"
+        },
+        {
+          "name": "Firebase",
+          "level": 92,
+          "icon": "firebase",
+          "color": "#FFCA28"
+        },
+        {
+          "name": "PostgreSQL",
+          "level": 80,
+          "icon": "database",
+          "color": "#4169E1"
+        },
+        {
+          "name": "GraphQL",
+          "level": 82,
+          "icon": "graphql",
+          "color": "#E10098"
+        }
+      ]
+    },
+    {
+      "name": "Mobile Development",
+      "icon": "mobile",
+      "skills": [
+        {
+          "name": "Flutter",
+          "level": 95,
+          "icon": "flutter",
+          "color": "#02569B"
+        },
+        {
+          "name": "React Native",
+          "level": 85,
+          "icon": "react",
+          "color": "#61DAFB"
+        },
+        {
+          "name": "iOS (Swift)",
+          "level": 75,
+          "icon": "apple",
+          "color": "#000000"
+        },
+        {
+          "name": "Android (Kotlin)",
+          "level": 78,
+          "icon": "android",
+          "color": "#3DDC84"
+        }
+      ]
+    },
+    {
+      "name": "Design & Tools",
+      "icon": "design",
+      "skills": [
+        {
+          "name": "Figma",
+          "level": 90,
+          "icon": "figma",
+          "color": "#F24E1E"
+        },
+        {
+          "name": "Adobe XD",
+          "level": 85,
+          "icon": "adobe",
+          "color": "#FF61F6"
+        },
+        {
+          "name": "Git",
+          "level": 92,
+          "icon": "git",
+          "color": "#F05032"
+        },
+        {
+          "name": "Docker",
+          "level": 80,
+          "icon": "docker",
+          "color": "#2496ED"
+        },
+        {
+          "name": "AWS",
+          "level": 78,
+          "icon": "aws",
+          "color": "#FF9900"
+        }
+      ]
+    }
+  ]
+}

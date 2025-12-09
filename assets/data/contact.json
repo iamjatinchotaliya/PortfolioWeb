@@ -1,0 +1,95 @@
+{
+  "formConfig": {
+    "enabled": true,
+    "email": "alex.johnson@example.com",
+    "subject": "Portfolio Contact Form Submission",
+    "successMessage": "Thank you for reaching out! I'll get back to you within 24 hours.",
+    "errorMessage": "Oops! Something went wrong. Please try again or email me directly."
+  },
+  "contactMethods": [
+    {
+      "id": "1",
+      "type": "email",
+      "label": "Email",
+      "value": "alex.johnson@example.com",
+      "icon": "email",
+      "link": "mailto:alex.johnson@example.com",
+      "primary": true
+    },
+    {
+      "id": "2",
+      "type": "phone",
+      "label": "Phone",
+      "value": "+1 (555) 123-4567",
+      "icon": "phone",
+      "link": "tel:+15551234567",
+      "primary": false
+    },
+    {
+      "id": "3",
+      "type": "location",
+      "label": "Location",
+      "value": "San Francisco, CA",
+      "icon": "location",
+      "link": "",
+      "primary": false
+    }
+  ],
+  "socialLinks": [
+    {
+      "id": "1",
+      "platform": "GitHub",
+      "username": "@alexjohnson",
+      "url": "https://github.com/alexjohnson",
+      "icon": "github",
+      "color": "#181717"
+    },
+    {
+      "id": "2",
+      "platform": "LinkedIn",
+      "username": "Alex Johnson",
+      "url": "https://linkedin.com/in/alexjohnson",
+      "icon": "linkedin",
+      "color": "#0A66C2"
+    },
+    {
+      "id": "3",
+      "platform": "Twitter",
+      "username": "@alexjohnson",
+      "url": "https://twitter.com/alexjohnson",
+      "icon": "twitter",
+      "color": "#1DA1F2"
+    },
+    {
+      "id": "4",
+      "platform": "Dribbble",
+      "username": "alexjohnson",
+      "url": "https://dribbble.com/alexjohnson",
+      "icon": "dribbble",
+      "color": "#EA4C89"
+    },
+    {
+      "id": "5",
+      "platform": "Medium",
+      "username": "@alexjohnson",
+      "url": "https://medium.com/@alexjohnson",
+      "icon": "medium",
+      "color": "#000000"
+    },
+    {
+      "id": "6",
+      "platform": "Instagram",
+      "username": "@alexjohnson",
+      "url": "https://instagram.com/alexjohnson",
+      "icon": "instagram",
+      "color": "#E4405F"
+    }
+  ],
+  "availability": {
+    "status": "available",
+    "message": "Currently available for freelance projects and consulting opportunities",
+    "openToWork": true,
+    "preferredContact": "email",
+    "responseTime": "24 hours"
+  }
+}

@@ -1,0 +1,42 @@
+{
+  "name": "Alex Johnson",
+  "title": "Full Stack Developer & UI/UX Designer",
+  "tagline": "Crafting Digital Experiences with Code & Creativity",
+  "bio": "Passionate developer with 5+ years of experience building scalable web and mobile applications. I specialize in creating beautiful, user-centric solutions that solve real-world problems. When I'm not coding, you'll find me exploring new technologies, contributing to open-source, or sharing knowledge with the developer community.",
+  "email": "alex.johnson@example.com",
+  "phone": "+1 (555) 123-4567",
+  "location": "San Francisco, CA",
+  "avatar": "assets/images/avatar.png",
+  "resume": "assets/documents/resume.pdf",
+  "availability": "Available for freelance work",
+  "social": {
+    "github": "https://github.com/alexjohnson",
+    "linkedin": "https://linkedin.com/in/alexjohnson",
+    "twitter": "https://twitter.com/alexjohnson",
+    "dribbble": "https://dribbble.com/alexjohnson",
+    "medium": "https://medium.com/@alexjohnson",
+    "instagram": "https://instagram.com/alexjohnson"
+  },
+  "stats": [
+    {
+      "label": "Years Experience",
+      "value": "5+",
+      "icon": "work"
+    },
+    {
+      "label": "Projects Completed",
+      "value": "50+",
+      "icon": "code"
+    },
+    {
+      "label": "Happy Clients",
+      "value": "30+",
+      "icon": "people"
+    },
+    {
+      "label": "Code Commits",
+      "value": "2000+",
+      "icon": "commit"
+    }
+  ]
+}
