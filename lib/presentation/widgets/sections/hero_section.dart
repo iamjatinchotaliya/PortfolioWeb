@@ -22,7 +22,7 @@ class HeroSection extends StatefulWidget {
 class _HeroSectionState extends State<HeroSection> with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   int _currentTextIndex = 0;
-  final List<String> _rotatingTexts = ['Full Stack Developer', 'UI/UX Designer', 'Problem Solver', 'Creative Thinker'];
+  final List<String> _rotatingTexts = ['Flutter Developer', 'Full Stack Developer', 'Problem Solver', 'Creative Thinker'];
 
   @override
   void initState() {
