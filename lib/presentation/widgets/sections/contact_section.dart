@@ -46,7 +46,16 @@ class _ContactSectionState extends State<ContactSection> {
       case 'github':
         return FontAwesomeIcons.github;
       case 'twitter':
-        return FontAwesomeIcons.twitter;
+      case 'x':
+        return FontAwesomeIcons.xTwitter;
+      case 'instagram':
+        return FontAwesomeIcons.instagram;
+      case 'facebook':
+        return FontAwesomeIcons.facebook;
+      case 'dribbble':
+        return FontAwesomeIcons.dribbble;
+      case 'medium':
+        return FontAwesomeIcons.medium;
       default:
         return FontAwesomeIcons.circleInfo;
     }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 import 'core/themes/app_theme.dart';
@@ -8,6 +9,13 @@ import 'presentation/blocs/theme/theme_state.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Web-specific optimizations
+  if (kIsWeb) {
+    // Disable debug banner for performance
+    debugPrint('Running in web mode with optimizations');
+  }
+
   runApp(const MyApp());
 }
 
@@ -21,12 +29,14 @@ class MyApp extends StatelessWidget {
       child: BlocBuilder<ThemeBloc, ThemeState>(
         builder: (context, state) {
           return MaterialApp.router(
-            title: 'Portfolio - Full Stack Developer',
+            title: 'Portfolio - Mobile App Developer',
             debugShowCheckedModeBanner: false,
             theme: AppTheme.lightTheme,
             darkTheme: AppTheme.darkTheme,
             themeMode: state.themeMode,
             routerConfig: AppRouter.router,
+            // Performance optimizations
+            scrollBehavior: const MaterialScrollBehavior().copyWith(scrollbars: false, physics: const BouncingScrollPhysics()),
             builder: (context, child) => ResponsiveBreakpoints.builder(
               child: child!,
               breakpoints: [

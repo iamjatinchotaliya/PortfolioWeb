@@ -191,34 +191,31 @@ class SkillsSection extends StatelessWidget {
 
   Widget _buildSkillCard(BuildContext context, Skill skill) {
     return AnimatedCard(
-      child: Container(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Row(
-              children: [
-                Container(
-                  width: 40,
-                  height: 40,
-                  decoration: BoxDecoration(color: _parseColor(skill.color, context).withOpacity(0.1), borderRadius: BorderRadius.circular(8)),
-                  child: Icon(FontAwesomeIcons.code, size: 20, color: _parseColor(skill.color, context)),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Text(skill.name, style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
-                ),
-                Text(
-                  '${skill.level}%',
-                  style: Theme.of(context).textTheme.titleSmall?.copyWith(color: Theme.of(context).colorScheme.primary, fontWeight: FontWeight.bold),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            _buildProgressBar(context, skill),
-          ],
-        ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Row(
+            children: [
+              Container(
+                width: 40,
+                height: 40,
+                decoration: BoxDecoration(color: _parseColor(skill.color, context).withOpacity(0.1), borderRadius: BorderRadius.circular(8)),
+                child: Icon(FontAwesomeIcons.code, size: 20, color: _parseColor(skill.color, context)),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(skill.name, style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
+              ),
+              Text(
+                '${skill.level}%',
+                style: Theme.of(context).textTheme.titleSmall?.copyWith(color: Theme.of(context).colorScheme.primary, fontWeight: FontWeight.bold),
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
+          _buildProgressBar(context, skill),
+        ],
       ),
     );
   }

@@ -60,10 +60,34 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   
-  <!-- Model Viewer for 3D models -->
-  <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.3.0/model-viewer.min.js"></script>
+  <!-- Model Viewer for 3D models - async loading for performance -->
+  <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.3.0/model-viewer.min.js" async></script>
+  
+  <!-- Performance optimizations -->
+  <link rel="preload" as="script" href="flutter.js">
+  <link rel="dns-prefetch" href="https://fonts.googleapis.com">
+  <link rel="dns-prefetch" href="https://ajax.googleapis.com">
   
   <style>
+    /* Performance optimizations */
+    * {
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    
+    body {
+      margin: 0;
+      overflow-x: hidden;
+      overscroll-behavior: none;
+    }
+    
+    /* GPU acceleration for smooth animations */
+    body, #root {
+      transform: translateZ(0);
+      backface-visibility: hidden;
+      perspective: 1000px;
+    }
+    
     /* Loading Screen */
     .loading {
       display: flex;
@@ -71,6 +95,8 @@
       align-items: center;
       height: 100vh;
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      will-change: opacity;
+      transition: opacity 0.3s ease;
     }
     .loading-spinner {
       width: 50px;
@@ -79,6 +105,7 @@
       border-top-color: white;
       border-radius: 50%;
       animation: spin 1s linear infinite;
+      will-change: transform;
     }
     @keyframes spin {
       to { transform: rotate(360deg); }

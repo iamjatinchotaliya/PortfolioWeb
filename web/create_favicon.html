@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head><title>Generate Favicon</title></head>
+<body>
+<canvas id="canvas" width="512" height="512"></canvas>
+<script>
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+
+// Gradient background
+const gradient = ctx.createLinearGradient(0, 0, 512, 512);
+gradient.addColorStop(0, '#667eea');
+gradient.addColorStop(1, '#764ba2');
+ctx.fillStyle = gradient;
+ctx.roundRect(0, 0, 512, 512, 100);
+ctx.fill();
+
+// Mobile phone outline
+ctx.strokeStyle = 'white';
+ctx.fillStyle = 'rgba(255,255,255,0.9)';
+ctx.lineWidth = 15;
+
+// Phone shape
+ctx.beginPath();
+ctx.roundRect(140, 80, 232, 400, 30);
+ctx.fill();
+ctx.stroke();
+
+// Screen
+ctx.fillStyle = '#667eea';
+ctx.fillRect(165, 110, 182, 280);
+
+// Home button
+ctx.beginPath();
+ctx.arc(256, 430, 18, 0, Math.PI * 2);
+ctx.fillStyle = 'white';
+ctx.fill();
+ctx.strokeStyle = '#667eea';
+ctx.lineWidth = 3;
+ctx.stroke();
+
+// Flutter logo inspired - triangle layers
+ctx.fillStyle = 'rgba(255,255,255,0.3)';
+ctx.beginPath();
+ctx.moveTo(200, 160);
+ctx.lineTo(280, 200);
+ctx.lineTo(200, 240);
+ctx.fill();
+
+ctx.fillStyle = 'rgba(255,255,255,0.5)';
+ctx.beginPath();
+ctx.moveTo(220, 200);
+ctx.lineTo(300, 240);
+ctx.lineTo(220, 280);
+ctx.fill();
+
+// Download button
+const link = document.createElement('a');
+link.download = 'favicon.png';
+link.href = canvas.toDataURL();
+link.click();
+</script>
+</body>
+</html>

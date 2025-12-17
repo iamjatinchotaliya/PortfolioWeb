@@ -161,14 +161,92 @@ class _CustomNavBarState extends State<CustomNavBar> {
       children: [
         BlocBuilder<ThemeBloc, ThemeState>(
           builder: (context, state) {
-            return IconButton(
-              icon: Icon(state.themeMode == ThemeMode.dark ? Icons.light_mode : Icons.dark_mode),
-              onPressed: () {
-                context.read<ThemeBloc>().add(const ToggleThemeEvent());
-              },
+            final isDark = state.themeMode == ThemeMode.dark;
+            return MouseRegion(
+              cursor: SystemMouseCursors.click,
+              child: GestureDetector(
+                onTap: () {
+                  context.read<ThemeBloc>().add(const ToggleThemeEvent());
+                },
+                child: TweenAnimationBuilder<double>(
+                  duration: const Duration(milliseconds: 400),
+                  tween: Tween<double>(begin: 0, end: isDark ? 1 : 0),
+                  curve: Curves.easeInOutCubic,
+                  builder: (context, value, child) {
+                    return Container(
+                      width: 60,
+                      height: 32,
+                      padding: const EdgeInsets.all(2),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(20),
+                        gradient: LinearGradient(
+                          colors: [
+                            Color.lerp(const Color(0xFF00D9FF), const Color(0xFF0A0E27), value)!,
+                            Color.lerp(const Color(0xFF0099FF), const Color(0xFF1A1F3A), value)!,
+                          ],
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Color.lerp(const Color(0xFF00D9FF), const Color(0xFF00F5FF), value)!.withOpacity(0.3 + (0.2 * value)),
+                            blurRadius: 8 + (4 * value),
+                            spreadRadius: 1 + value,
+                          ),
+                        ],
+                      ),
+                      child: Stack(
+                        children: [
+                          // Animated position
+                          AnimatedPositioned(
+                            duration: const Duration(milliseconds: 400),
+                            curve: Curves.easeInOutCubic,
+                            left: isDark ? 28 : 0,
+                            top: 0,
+                            bottom: 0,
+                            child: AnimatedContainer(
+                              duration: const Duration(milliseconds: 400),
+                              width: 28,
+                              height: 28,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: Colors.white,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.1 + (0.05 * value)),
+                                    blurRadius: 4 + (2 * value),
+                                    offset: Offset(0, 2 + value),
+                                  ),
+                                ],
+                              ),
+                              child: Transform.rotate(
+                                angle: value * 3.14159 * 2, // 360 degree rotation
+                                child: AnimatedSwitcher(
+                                  duration: const Duration(milliseconds: 300),
+                                  transitionBuilder: (child, animation) {
+                                    return ScaleTransition(
+                                      scale: animation,
+                                      child: FadeTransition(opacity: animation, child: child),
+                                    );
+                                  },
+                                  child: Icon(
+                                    isDark ? Icons.nights_stay : Icons.wb_sunny,
+                                    key: ValueKey(isDark),
+                                    size: 16,
+                                    color: isDark ? const Color(0xFF00F5FF) : const Color(0xFFFFBE0B),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                ),
+              ),
             );
           },
         ),
+        const SizedBox(width: 12),
       ],
     );
   }

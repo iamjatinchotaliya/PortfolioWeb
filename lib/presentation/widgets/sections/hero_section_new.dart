@@ -1,46 +1,47 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../../../core/themes/app_theme.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../core/utils/responsive_helper.dart';
 import '../../../core/utils/url_helper.dart';
 import '../../../data/models/personal_info.dart';
+import '../../blocs/hero/hero_cubit.dart';
 import '../common/animated_button.dart';
 import '../common/flip_card_3d.dart';
 
-class HeroSection extends StatefulWidget {
+class HeroSection extends StatelessWidget {
   final PersonalInfo personalInfo;
   final Function(String) onNavigate;
 
   const HeroSection({super.key, required this.personalInfo, required this.onNavigate});
 
   @override
-  State<HeroSection> createState() => _HeroSectionState();
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (context) => HeroCubit(),
+      child: _HeroSectionContent(personalInfo: personalInfo, onNavigate: onNavigate),
+    );
+  }
 }
 
-class _HeroSectionState extends State<HeroSection> with SingleTickerProviderStateMixin {
+class _HeroSectionContent extends StatefulWidget {
+  final PersonalInfo personalInfo;
+  final Function(String) onNavigate;
+
+  const _HeroSectionContent({required this.personalInfo, required this.onNavigate});
+
+  @override
+  State<_HeroSectionContent> createState() => _HeroSectionContentState();
+}
+
+class _HeroSectionContentState extends State<_HeroSectionContent> with SingleTickerProviderStateMixin {
   late AnimationController _controller;
-  int _currentTextIndex = 0;
-  final List<String> _rotatingTexts = ['Full Stack Developer', 'UI/UX Designer', 'Problem Solver', 'Creative Thinker'];
 
   @override
   void initState() {
     super.initState();
     _controller = AnimationController(duration: const Duration(milliseconds: 2000), vsync: this)..repeat();
-
-    _startTextRotation();
-  }
-
-  void _startTextRotation() {
-    Future.delayed(const Duration(seconds: 3), () {
-      if (mounted) {
-        setState(() {
-          _currentTextIndex = (_currentTextIndex + 1) % _rotatingTexts.length;
-        });
-        _startTextRotation();
-      }
-    });
   }
 
   @override
@@ -130,32 +131,37 @@ class _HeroSectionState extends State<HeroSection> with SingleTickerProviderStat
   }
 
   Widget _buildRotatingText() {
-    return SizedBox(
-      height: 60,
-      child: AnimatedSwitcher(
-        duration: const Duration(milliseconds: 500),
-        transitionBuilder: (Widget child, Animation<double> animation) {
-          return FadeTransition(
-            opacity: animation,
-            child: SlideTransition(
-              position: Tween<Offset>(begin: const Offset(0, 0.3), end: Offset.zero).animate(animation),
-              child: child,
+    return BlocBuilder<HeroCubit, HeroState>(
+      builder: (context, state) {
+        final heroCubit = context.read<HeroCubit>();
+        return SizedBox(
+          height: 60,
+          child: AnimatedSwitcher(
+            duration: const Duration(milliseconds: 500),
+            transitionBuilder: (Widget child, Animation<double> animation) {
+              return FadeTransition(
+                opacity: animation,
+                child: SlideTransition(
+                  position: Tween<Offset>(begin: const Offset(0, 0.3), end: Offset.zero).animate(animation),
+                  child: child,
+                ),
+              );
+            },
+            child: Container(
+              key: ValueKey<int>(state.currentTextIndex),
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(colors: AppTheme.primaryGradient.map((c) => c.withOpacity(0.2)).toList()),
+                borderRadius: BorderRadius.circular(AppTheme.radiusMedium),
+              ),
+              child: Text(
+                heroCubit.rotatingTexts[state.currentTextIndex],
+                style: Theme.of(context).textTheme.headlineSmall?.copyWith(color: Theme.of(context).colorScheme.primary, fontWeight: FontWeight.w600),
+              ),
             ),
-          );
-        },
-        child: Container(
-          key: ValueKey<int>(_currentTextIndex),
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-          decoration: BoxDecoration(
-            gradient: LinearGradient(colors: AppTheme.primaryGradient.map((c) => c.withOpacity(0.2)).toList()),
-            borderRadius: BorderRadius.circular(AppTheme.radiusMedium),
           ),
-          child: Text(
-            _rotatingTexts[_currentTextIndex],
-            style: Theme.of(context).textTheme.headlineSmall?.copyWith(color: Theme.of(context).colorScheme.primary, fontWeight: FontWeight.w600),
-          ),
-        ),
-      ),
+        );
+      },
     );
   }
 
@@ -173,15 +179,15 @@ class _HeroSectionState extends State<HeroSection> with SingleTickerProviderStat
 
   Widget _buildSocialLinks() {
     final socialLinks = [
-      {'icon': FontAwesomeIcons.github, 'url': widget.personalInfo.social.github, 'label': 'GitHub'},
-      {'icon': FontAwesomeIcons.linkedin, 'url': widget.personalInfo.social.linkedin, 'label': 'LinkedIn'},
-      {'icon': FontAwesomeIcons.xTwitter, 'url': widget.personalInfo.social.twitter, 'label': 'X'},
+      {'icon': 'github', 'url': widget.personalInfo.social.github},
+      {'icon': 'linkedin', 'url': widget.personalInfo.social.linkedin},
+      {'icon': 'twitter', 'url': widget.personalInfo.social.twitter},
     ];
 
     return Row(
       mainAxisAlignment: ResponsiveHelper.isMobile(context) ? MainAxisAlignment.center : MainAxisAlignment.start,
       children: socialLinks.map((link) {
-        return _SocialIconButton(onTap: () => UrlHelper.launchURL(link['url']! as String), icon: link['icon']! as IconData);
+        return _SocialIconButton(onTap: () => UrlHelper.launchURL(link['url']!));
       }).toList(),
     );
   }
@@ -231,39 +237,44 @@ class _HeroSectionState extends State<HeroSection> with SingleTickerProviderStat
   }
 }
 
-class _SocialIconButton extends StatefulWidget {
+class _SocialIconButton extends StatelessWidget {
   final VoidCallback onTap;
-  final IconData icon;
 
-  const _SocialIconButton({required this.onTap, required this.icon});
-
-  @override
-  State<_SocialIconButton> createState() => _SocialIconButtonState();
-}
-
-class _SocialIconButtonState extends State<_SocialIconButton> {
-  bool _isHovered = false;
+  const _SocialIconButton({required this.onTap});
 
   @override
   Widget build(BuildContext context) {
-    return MouseRegion(
-      onEnter: (_) => setState(() => _isHovered = true),
-      onExit: (_) => setState(() => _isHovered = false),
-      cursor: SystemMouseCursors.click,
-      child: GestureDetector(
-        onTap: widget.onTap,
-        child: AnimatedContainer(
-          duration: AppTheme.animationFast,
-          margin: const EdgeInsets.only(right: 16),
-          width: 50,
-          height: 50,
-          decoration: BoxDecoration(
-            color: _isHovered ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.primary.withOpacity(0.1),
-            shape: BoxShape.circle,
-          ),
-          child: Icon(widget.icon, color: _isHovered ? Colors.white : Theme.of(context).colorScheme.primary, size: 24),
-        ),
+    return BlocProvider(
+      create: (context) => _HoverCubit(),
+      child: BlocBuilder<_HoverCubit, bool>(
+        builder: (context, isHovered) {
+          return MouseRegion(
+            onEnter: (_) => context.read<_HoverCubit>().setHovered(true),
+            onExit: (_) => context.read<_HoverCubit>().setHovered(false),
+            cursor: SystemMouseCursors.click,
+            child: GestureDetector(
+              onTap: onTap,
+              child: AnimatedContainer(
+                duration: AppTheme.animationFast,
+                margin: const EdgeInsets.only(right: 16),
+                width: 50,
+                height: 50,
+                decoration: BoxDecoration(
+                  color: isHovered ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.primary.withOpacity(0.1),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(Icons.link, color: isHovered ? Colors.white : Theme.of(context).colorScheme.primary, size: 24),
+              ),
+            ),
+          );
+        },
       ),
     );
   }
+}
+
+class _HoverCubit extends Cubit<bool> {
+  _HoverCubit() : super(false);
+
+  void setHovered(bool value) => emit(value);
 }

@@ -13,6 +13,10 @@ import '../widgets/sections/projects_section.dart';
 import '../widgets/sections/experience_section.dart';
 import '../widgets/sections/blog_section.dart';
 import '../widgets/sections/contact_section.dart';
+import '../widgets/common/portfolio_loader.dart';
+import '../widgets/common/animated_background.dart';
+import '../widgets/common/cursor_glow.dart';
+import '../widgets/common/scroll_progress_indicator.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -53,7 +57,7 @@ class HomePageView extends StatelessWidget {
       body: BlocBuilder<PortfolioBloc, PortfolioState>(
         builder: (context, state) {
           if (state is PortfolioLoading) {
-            return const Center(child: CircularProgressIndicator());
+            return const PortfolioLoader();
           }
 
           if (state is PortfolioError) {
@@ -79,77 +83,104 @@ class HomePageView extends StatelessWidget {
           }
 
           if (state is PortfolioLoaded) {
-            return Stack(
-              children: [
-                CustomScrollView(
-                  controller: scrollController,
-                  slivers: [
-                    // Hero Section
-                    SliverToBoxAdapter(
-                      child: Container(
-                        key: sectionKeys[AppConstants.homeSectionId],
-                        child: HeroSection(personalInfo: state.personalInfo, onNavigate: scrollToSection),
+            return AnimatedBackground(
+              child: CursorGlow(
+                child: Stack(
+                  children: [
+                    RepaintBoundary(
+                      child: CustomScrollView(
+                        controller: scrollController,
+                        physics: const BouncingScrollPhysics(),
+                        cacheExtent: 1000, // Cache for smoother scrolling
+                        slivers: [
+                          // Hero Section
+                          SliverToBoxAdapter(
+                            child: RepaintBoundary(
+                              child: Container(
+                                key: sectionKeys[AppConstants.homeSectionId],
+                                child: HeroSection(personalInfo: state.personalInfo, onNavigate: scrollToSection),
+                              ),
+                            ),
+                          ),
+
+                          // About Section
+                          SliverToBoxAdapter(
+                            child: RepaintBoundary(
+                              child: Container(
+                                key: sectionKeys[AppConstants.aboutSectionId],
+                                child: AboutSection(personalInfo: state.personalInfo),
+                              ),
+                            ),
+                          ),
+
+                          // Skills Section
+                          SliverToBoxAdapter(
+                            child: RepaintBoundary(
+                              child: Container(
+                                key: sectionKeys[AppConstants.skillsSectionId],
+                                child: SkillsSection(skillCategories: state.skillCategories),
+                              ),
+                            ),
+                          ),
+
+                          // Projects Section
+                          SliverToBoxAdapter(
+                            child: RepaintBoundary(
+                              child: Container(
+                                key: sectionKeys[AppConstants.projectsSectionId],
+                                child: ProjectsSection(projects: state.projects),
+                              ),
+                            ),
+                          ),
+
+                          // Experience Section
+                          SliverToBoxAdapter(
+                            child: RepaintBoundary(
+                              child: Container(
+                                key: sectionKeys[AppConstants.experienceSectionId],
+                                child: ExperienceSection(experiences: state.experiences),
+                              ),
+                            ),
+                          ),
+
+                          // Blog Section
+                          SliverToBoxAdapter(
+                            child: RepaintBoundary(
+                              child: Container(
+                                key: sectionKeys[AppConstants.blogSectionId],
+                                child: BlogSection(blogPosts: state.blogPosts),
+                              ),
+                            ),
+                          ),
+
+                          // Contact Section
+                          SliverToBoxAdapter(
+                            child: RepaintBoundary(
+                              child: Container(
+                                key: sectionKeys[AppConstants.contactSectionId],
+                                child: ContactSection(contact: state.contact),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
 
-                    // About Section
-                    SliverToBoxAdapter(
-                      child: Container(
-                        key: sectionKeys[AppConstants.aboutSectionId],
-                        child: AboutSection(personalInfo: state.personalInfo),
+                    // Navigation Bar
+                    Positioned(
+                      top: 0,
+                      left: 0,
+                      right: 0,
+                      child: RepaintBoundary(
+                        child: CustomNavBar(scrollController: scrollController, onNavItemTap: scrollToSection),
                       ),
                     ),
 
-                    // Skills Section
-                    SliverToBoxAdapter(
-                      child: Container(
-                        key: sectionKeys[AppConstants.skillsSectionId],
-                        child: SkillsSection(skillCategories: state.skillCategories),
-                      ),
-                    ),
-
-                    // Projects Section
-                    SliverToBoxAdapter(
-                      child: Container(
-                        key: sectionKeys[AppConstants.projectsSectionId],
-                        child: ProjectsSection(projects: state.projects),
-                      ),
-                    ),
-
-                    // Experience Section
-                    SliverToBoxAdapter(
-                      child: Container(
-                        key: sectionKeys[AppConstants.experienceSectionId],
-                        child: ExperienceSection(experiences: state.experiences),
-                      ),
-                    ),
-
-                    // Blog Section
-                    SliverToBoxAdapter(
-                      child: Container(
-                        key: sectionKeys[AppConstants.blogSectionId],
-                        child: BlogSection(blogPosts: state.blogPosts),
-                      ),
-                    ),
-
-                    // Contact Section
-                    SliverToBoxAdapter(
-                      child: Container(
-                        key: sectionKeys[AppConstants.contactSectionId],
-                        child: ContactSection(contact: state.contact),
-                      ),
-                    ),
+                    // Scroll Progress Indicator
+                    ScrollProgressIndicator(scrollController: scrollController),
                   ],
                 ),
-
-                // Navigation Bar
-                Positioned(
-                  top: 0,
-                  left: 0,
-                  right: 0,
-                  child: CustomNavBar(scrollController: scrollController, onNavItemTap: scrollToSection),
-                ),
-              ],
+              ),
             );
           }
 

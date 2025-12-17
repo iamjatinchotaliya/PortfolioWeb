@@ -244,27 +244,24 @@ class AboutSection extends StatelessWidget {
             child: ScaleAnimation(
               child: FadeInAnimation(
                 child: AnimatedCard(
-                  child: Container(
-                    padding: const EdgeInsets.all(24),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(_getStatIcon(stat.icon), size: 32, color: Theme.of(context).colorScheme.primary),
-                        const SizedBox(height: 16),
-                        Text(
-                          stat.value,
-                          style: Theme.of(
-                            context,
-                          ).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.primary),
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          stat.label,
-                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7)),
-                          textAlign: TextAlign.center,
-                        ),
-                      ],
-                    ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(_getStatIcon(stat.icon), size: 32, color: Theme.of(context).colorScheme.primary),
+                      const SizedBox(height: 16),
+                      Text(
+                        stat.value,
+                        style: Theme.of(
+                          context,
+                        ).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.primary),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        stat.label,
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7)),
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
                   ),
                 ),
               ),

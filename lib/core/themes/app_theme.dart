@@ -2,44 +2,53 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class AppTheme {
-  // Light Theme Colors
-  static const Color lightPrimary = Color(0xFF6366F1); // Indigo
-  static const Color lightSecondary = Color(0xFF8B5CF6); // Purple
-  static const Color lightAccent = Color(0xFFEC4899); // Pink
-  static const Color lightBackground = Color(0xFFFAFAFA);
+  // Premium Cyberpunk/Aurora Color Scheme - Light Theme
+  static const Color lightPrimary = Color(0xFF00D9FF); // Electric Cyan
+  static const Color lightSecondary = Color(0xFFFF006E); // Hot Pink
+  static const Color lightAccent = Color(0xFFFFBE0B); // Golden Yellow
+  static const Color lightBackground = Color(0xFFF8F9FF);
   static const Color lightSurface = Color(0xFFFFFFFF);
-  static const Color lightError = Color(0xFFEF4444);
-  static const Color lightSuccess = Color(0xFF10B981);
-  static const Color lightWarning = Color(0xFFF59E0B);
-  static const Color lightInfo = Color(0xFF3B82F6);
+  static const Color lightError = Color(0xFFFF3864);
+  static const Color lightSuccess = Color(0xFF00F5A0);
+  static const Color lightWarning = Color(0xFFFFBE0B);
+  static const Color lightInfo = Color(0xFF00D9FF);
 
-  // Dark Theme Colors
-  static const Color darkPrimary = Color(0xFF818CF8); // Lighter Indigo
-  static const Color darkSecondary = Color(0xFFA78BFA); // Lighter Purple
-  static const Color darkAccent = Color(0xFFF472B6); // Lighter Pink
-  static const Color darkBackground = Color(0xFF0F172A); // Slate 900
-  static const Color darkSurface = Color(0xFF1E293B); // Slate 800
-  static const Color darkError = Color(0xFFF87171);
-  static const Color darkSuccess = Color(0xFF34D399);
-  static const Color darkWarning = Color(0xFFFBBF24);
-  static const Color darkInfo = Color(0xFF60A5FA);
+  // Premium Dark Theme - Deep Space with Neon Accents
+  static const Color darkPrimary = Color(0xFF00F5FF); // Neon Cyan
+  static const Color darkSecondary = Color(0xFFFF0080); // Neon Pink
+  static const Color darkAccent = Color(0xFFFFD60A); // Neon Yellow
+  static const Color darkBackground = Color(0xFF0A0E27); // Deep Space Blue
+  static const Color darkSurface = Color(0xFF1A1F3A); // Dark Slate
+  static const Color darkError = Color(0xFFFF4757);
+  static const Color darkSuccess = Color(0xFF00F2A0);
+  static const Color darkWarning = Color(0xFFFFD60A);
+  static const Color darkInfo = Color(0xFF00F5FF);
 
   // Text Colors Light
-  static const Color lightTextPrimary = Color(0xFF1E293B);
-  static const Color lightTextSecondary = Color(0xFF64748B);
-  static const Color lightTextTertiary = Color(0xFF94A3B8);
+  static const Color lightTextPrimary = Color(0xFF0A0E27);
+  static const Color lightTextSecondary = Color(0xFF4A5568);
+  static const Color lightTextTertiary = Color(0xFF718096);
 
   // Text Colors Dark
-  static const Color darkTextPrimary = Color(0xFFF1F5F9);
-  static const Color darkTextSecondary = Color(0xFFCBD5E1);
-  static const Color darkTextTertiary = Color(0xFF94A3B8);
+  static const Color darkTextPrimary = Color(0xFFF7FAFC);
+  static const Color darkTextSecondary = Color(0xFFCBD5E0);
+  static const Color darkTextTertiary = Color(0xFFA0AEC0);
 
-  // Gradient Colors
-  static const List<Color> primaryGradient = [Color(0xFF6366F1), Color(0xFF8B5CF6)];
+  // Premium Gradient Collections
+  static const List<Color> primaryGradient = [Color(0xFF00D9FF), Color(0xFF0099FF)];
 
-  static const List<Color> secondaryGradient = [Color(0xFF8B5CF6), Color(0xFFEC4899)];
+  static const List<Color> secondaryGradient = [Color(0xFFFF006E), Color(0xFFFF0080)];
 
-  static const List<Color> accentGradient = [Color(0xFFEC4899), Color(0xFFF97316)];
+  static const List<Color> accentGradient = [Color(0xFFFFBE0B), Color(0xFFFF6B00)];
+
+  // New: Aurora Gradient
+  static const List<Color> auroraGradient = [Color(0xFF00F5FF), Color(0xFF00D9FF), Color(0xFF0099FF), Color(0xFF9D4EDD)];
+
+  // New: Sunset Gradient
+  static const List<Color> sunsetGradient = [Color(0xFFFF006E), Color(0xFFFF4D6D), Color(0xFFFFBE0B), Color(0xFFFF6B00)];
+
+  // New: Cosmic Gradient
+  static const List<Color> cosmicGradient = [Color(0xFF0A0E27), Color(0xFF1A1F3A), Color(0xFF2E3654), Color(0xFF3D4E81)];
 
   // Spacing
   static const double spacing4 = 4.0;

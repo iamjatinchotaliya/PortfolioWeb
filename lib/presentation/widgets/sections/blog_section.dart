@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:shimmer/shimmer.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../core/utils/responsive_helper.dart';
 import '../../../data/models/blog_post.dart';
@@ -192,29 +193,94 @@ class BlogSection extends StatelessWidget {
           // Cover Image
           Expanded(
             flex: 5,
-            child: Container(
-              width: double.infinity,
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [Theme.of(context).colorScheme.primary.withOpacity(0.3), Theme.of(context).colorScheme.secondary.withOpacity(0.3)],
-                ),
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(AppConstants.borderRadius),
-                  topRight: Radius.circular(AppConstants.borderRadius),
-                ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(AppConstants.borderRadius),
+                topRight: Radius.circular(AppConstants.borderRadius),
               ),
               child: Stack(
                 children: [
-                  Center(child: Icon(FontAwesomeIcons.newspaper, size: 48, color: Theme.of(context).colorScheme.primary.withOpacity(0.5))),
+                  // Network Image with Modern Loader
+                  Image.network(
+                    post.coverImage,
+                    width: double.infinity,
+                    height: double.infinity,
+                    fit: BoxFit.cover,
+                    loadingBuilder: (context, child, loadingProgress) {
+                      if (loadingProgress == null) return child;
+
+                      // Modern Shimmer Loader
+                      return Shimmer.fromColors(
+                        baseColor: Theme.of(context).colorScheme.surfaceContainerHighest,
+                        highlightColor: Theme.of(context).colorScheme.surface,
+                        child: Container(
+                          width: double.infinity,
+                          height: double.infinity,
+                          decoration: BoxDecoration(
+                            color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                            gradient: LinearGradient(
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                              colors: [
+                                Theme.of(context).colorScheme.primary.withOpacity(0.1),
+                                Theme.of(context).colorScheme.secondary.withOpacity(0.1),
+                              ],
+                            ),
+                          ),
+                          child: Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(FontAwesomeIcons.image, size: 48, color: Theme.of(context).colorScheme.primary.withOpacity(0.3)),
+                                const SizedBox(height: 12),
+                                SizedBox(
+                                  width: 40,
+                                  height: 40,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 3,
+                                    valueColor: AlwaysStoppedAnimation<Color>(Theme.of(context).colorScheme.primary.withOpacity(0.5)),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                    errorBuilder: (context, error, stackTrace) {
+                      // Fallback gradient when image fails to load
+                      return Container(
+                        width: double.infinity,
+                        height: double.infinity,
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                            colors: [
+                              Theme.of(context).colorScheme.primary.withOpacity(0.3),
+                              Theme.of(context).colorScheme.secondary.withOpacity(0.3),
+                            ],
+                          ),
+                        ),
+                        child: Center(
+                          child: Icon(FontAwesomeIcons.newspaper, size: 48, color: Theme.of(context).colorScheme.primary.withOpacity(0.5)),
+                        ),
+                      );
+                    },
+                  ),
+
+                  // Featured Badge
                   if (post.featured)
                     Positioned(
                       top: 12,
                       right: 12,
                       child: Container(
                         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                        decoration: BoxDecoration(color: Theme.of(context).colorScheme.secondary, borderRadius: BorderRadius.circular(12)),
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.secondary,
+                          borderRadius: BorderRadius.circular(12),
+                          boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.2), blurRadius: 8, offset: const Offset(0, 2))],
+                        ),
                         child: const Text(
                           'Featured',
                           style: TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold),

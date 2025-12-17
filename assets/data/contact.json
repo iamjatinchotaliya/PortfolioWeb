@@ -1,7 +1,7 @@
 {
   "formConfig": {
     "enabled": true,
-    "email": "alex.johnson@example.com",
+    "email": "jatincchotaliya@gmail.com",
     "subject": "Portfolio Contact Form Submission",
     "successMessage": "Thank you for reaching out! I'll get back to you within 24 hours.",
     "errorMessage": "Oops! Something went wrong. Please try again or email me directly."
@@ -11,9 +11,9 @@
       "id": "1",
       "type": "email",
       "label": "Email",
-      "value": "alex.johnson@example.com",
+      "value": "jatincchotaliya@gmail.com",
       "icon": "email",
-      "link": "mailto:alex.johnson@example.com",
+      "link": "mailto:jatincchotaliya@gmail.com",
       "primary": true
     },
     {
@@ -54,11 +54,19 @@
     },
     {
       "id": "3",
-      "platform": "Twitter",
+      "platform": "X",
       "username": "@alexjohnson",
       "url": "https://twitter.com/alexjohnson",
-      "icon": "twitter",
-      "color": "#1DA1F2"
+      "icon": "x",
+      "color": "#000000"
+    },
+    {
+      "id": "7",
+      "platform": "Facebook",
+      "username": "alexjohnson",
+      "url": "https://facebook.com/alexjohnson",
+      "icon": "facebook",
+      "color": "#1877F2"
     },
     {
       "id": "4",
