@@ -3,10 +3,10 @@ import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../core/utils/responsive_helper.dart';
-import '../../../core/utils/url_helper.dart';
 import '../../../data/models/project.dart';
 import '../common/animated_card.dart';
 import '../common/scroll_reveal_widget.dart';
+import '../common/project_links.dart';
 
 class ProjectsSection extends StatefulWidget {
   final List<Project> projects;
@@ -28,7 +28,10 @@ class _ProjectsSectionState extends State<ProjectsSection> {
   }
 
   void _extractCategories() {
-    final uniqueCategories = widget.projects.map((project) => project.category).toSet().toList();
+    final uniqueCategories = widget.projects
+        .map((project) => project.category)
+        .toSet()
+        .toList();
     setState(() {
       _categories = ['All', ...uniqueCategories];
     });
@@ -38,7 +41,9 @@ class _ProjectsSectionState extends State<ProjectsSection> {
     if (_selectedCategory == 'All') {
       return widget.projects;
     }
-    return widget.projects.where((project) => project.category == _selectedCategory).toList();
+    return widget.projects
+        .where((project) => project.category == _selectedCategory)
+        .toList();
   }
 
   @override
@@ -47,10 +52,9 @@ class _ProjectsSectionState extends State<ProjectsSection> {
 
     return Container(
       width: double.infinity,
-      padding: ResponsiveHelper.getResponsivePadding(context).copyWith(
-        top: isMobile ? 60 : 100,
-        bottom: isMobile ? 60 : 100,
-      ),
+      padding: ResponsiveHelper.getResponsivePadding(
+        context,
+      ).copyWith(top: isMobile ? 60 : 100, bottom: isMobile ? 60 : 100),
       color: Theme.of(context).colorScheme.surface.withOpacity(0.5),
       child: Center(
         child: Container(
@@ -66,8 +70,8 @@ class _ProjectsSectionState extends State<ProjectsSection> {
                     Text(
                       'Featured Projects',
                       style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     const SizedBox(height: 8),
                     Container(
@@ -94,8 +98,10 @@ class _ProjectsSectionState extends State<ProjectsSection> {
                 child: Text(
                   'A showcase of my recent work and contributions',
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
-                      ),
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.onSurface.withOpacity(0.7),
+                  ),
                 ),
               ),
               SizedBox(height: isMobile ? 32 : 48),
@@ -136,7 +142,10 @@ class _ProjectsSectionState extends State<ProjectsSection> {
               borderRadius: BorderRadius.circular(20),
               child: AnimatedContainer(
                 duration: const Duration(milliseconds: 300),
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 10,
+                ),
                 decoration: BoxDecoration(
                   color: isSelected
                       ? Theme.of(context).colorScheme.primary
@@ -145,17 +154,21 @@ class _ProjectsSectionState extends State<ProjectsSection> {
                   border: Border.all(
                     color: isSelected
                         ? Theme.of(context).colorScheme.primary
-                        : Theme.of(context).colorScheme.outline.withOpacity(0.3),
+                        : Theme.of(
+                            context,
+                          ).colorScheme.outline.withOpacity(0.3),
                   ),
                 ),
                 child: Text(
                   category,
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: isSelected
-                            ? Colors.white
-                            : Theme.of(context).colorScheme.onSurface,
-                        fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                      ),
+                    color: isSelected
+                        ? Colors.white
+                        : Theme.of(context).colorScheme.onSurface,
+                    fontWeight: isSelected
+                        ? FontWeight.bold
+                        : FontWeight.normal,
+                  ),
                 ),
               ),
             ),
@@ -176,7 +189,7 @@ class _ProjectsSectionState extends State<ProjectsSection> {
           padding: const EdgeInsets.all(48.0),
           child: Column(
             children: [
-              Icon(
+              FaIcon(
                 FontAwesomeIcons.folderOpen,
                 size: 64,
                 color: Theme.of(context).colorScheme.onSurface.withOpacity(0.3),
@@ -185,8 +198,10 @@ class _ProjectsSectionState extends State<ProjectsSection> {
               Text(
                 'No projects in this category',
                 style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
-                    ),
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.onSurface.withOpacity(0.5),
+                ),
               ),
             ],
           ),
@@ -245,7 +260,9 @@ class _ProjectsSectionState extends State<ProjectsSection> {
                       end: Alignment.bottomRight,
                       colors: [
                         Theme.of(context).colorScheme.primary.withOpacity(0.3),
-                        Theme.of(context).colorScheme.secondary.withOpacity(0.3),
+                        Theme.of(
+                          context,
+                        ).colorScheme.secondary.withOpacity(0.3),
                       ],
                     ),
                     borderRadius: BorderRadius.only(
@@ -254,20 +271,34 @@ class _ProjectsSectionState extends State<ProjectsSection> {
                     ),
                   ),
                   child: Center(
-                    child: Icon(
+                    child: FaIcon(
                       FontAwesomeIcons.laptop,
                       size: 48,
-                      color: Theme.of(context).colorScheme.primary.withOpacity(0.5),
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.primary.withOpacity(0.5),
                     ),
                   ),
                 ),
                 // Status Badge
+                if (project.image.isNotEmpty)
+                  Positioned.fill(
+                    child: Image.network(
+                      project.image,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) =>
+                          const SizedBox.shrink(),
+                    ),
+                  ),
                 if (project.status.isNotEmpty)
                   Positioned(
                     top: 12,
                     right: 12,
                     child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 6,
+                      ),
                       decoration: BoxDecoration(
                         color: _getStatusColor(project.status),
                         borderRadius: BorderRadius.circular(12),
@@ -288,7 +319,10 @@ class _ProjectsSectionState extends State<ProjectsSection> {
                     top: 12,
                     left: 12,
                     child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 6,
+                      ),
                       decoration: BoxDecoration(
                         color: Colors.amber,
                         borderRadius: BorderRadius.circular(12),
@@ -296,7 +330,11 @@ class _ProjectsSectionState extends State<ProjectsSection> {
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: const [
-                          Icon(FontAwesomeIcons.star, size: 12, color: Colors.white),
+                          FaIcon(
+                            FontAwesomeIcons.star,
+                            size: 12,
+                            color: Colors.white,
+                          ),
                           SizedBox(width: 4),
                           Text(
                             'Featured',
@@ -324,17 +362,22 @@ class _ProjectsSectionState extends State<ProjectsSection> {
                 children: [
                   // Category Badge
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 4,
+                    ),
                     decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.primary.withOpacity(0.1),
                       borderRadius: BorderRadius.circular(4),
                     ),
                     child: Text(
                       project.category,
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: Theme.of(context).colorScheme.primary,
-                            fontWeight: FontWeight.bold,
-                          ),
+                        color: Theme.of(context).colorScheme.primary,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                   const SizedBox(height: 12),
@@ -343,9 +386,9 @@ class _ProjectsSectionState extends State<ProjectsSection> {
                   Text(
                     project.title,
                     style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          height: 1.2,
-                        ),
+                      fontWeight: FontWeight.bold,
+                      height: 1.2,
+                    ),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -355,9 +398,11 @@ class _ProjectsSectionState extends State<ProjectsSection> {
                   Text(
                     project.subtitle,
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
-                          height: 1.4,
-                        ),
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.onSurface.withOpacity(0.6),
+                      height: 1.4,
+                    ),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -369,12 +414,17 @@ class _ProjectsSectionState extends State<ProjectsSection> {
                     runSpacing: 6,
                     children: project.technologies.take(3).map((tech) {
                       return Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 4,
+                        ),
                         decoration: BoxDecoration(
                           color: Theme.of(context).colorScheme.surface,
                           borderRadius: BorderRadius.circular(4),
                           border: Border.all(
-                            color: Theme.of(context).colorScheme.outline.withOpacity(0.3),
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.outline.withOpacity(0.3),
                           ),
                         ),
                         child: Text(
@@ -387,34 +437,7 @@ class _ProjectsSectionState extends State<ProjectsSection> {
                   const SizedBox(height: 12),
 
                   // Action Buttons
-                  Row(
-                    children: [
-                      if (project.github.isNotEmpty)
-                        Expanded(
-                          child: OutlinedButton.icon(
-                            onPressed: () => UrlHelper.launchURL(project.github),
-                            icon: const Icon(FontAwesomeIcons.github, size: 16),
-                            label: const Text('Code'),
-                            style: OutlinedButton.styleFrom(
-                              padding: const EdgeInsets.symmetric(vertical: 8),
-                            ),
-                          ),
-                        ),
-                      if (project.github.isNotEmpty && project.liveUrl.isNotEmpty)
-                        const SizedBox(width: 8),
-                      if (project.liveUrl.isNotEmpty)
-                        Expanded(
-                          child: ElevatedButton.icon(
-                            onPressed: () => UrlHelper.launchURL(project.liveUrl),
-                            icon: const Icon(FontAwesomeIcons.arrowUpRightFromSquare, size: 14),
-                            label: const Text('Live'),
-                            style: ElevatedButton.styleFrom(
-                              padding: const EdgeInsets.symmetric(vertical: 8),
-                            ),
-                          ),
-                        ),
-                    ],
-                  ),
+                  ProjectLinks(project: project, compact: true),
                 ],
               ),
             ),
@@ -460,15 +483,17 @@ class _ProjectsSectionState extends State<ProjectsSection> {
                           children: [
                             Text(
                               project.title,
-                              style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                              style: Theme.of(context).textTheme.headlineMedium
+                                  ?.copyWith(fontWeight: FontWeight.bold),
                             ),
                             const SizedBox(height: 8),
                             Text(
                               project.subtitle,
-                              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                                    color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+                              style: Theme.of(context).textTheme.titleMedium
+                                  ?.copyWith(
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.onSurface.withOpacity(0.7),
                                   ),
                             ),
                           ],
@@ -485,7 +510,9 @@ class _ProjectsSectionState extends State<ProjectsSection> {
                   // Description
                   Text(
                     project.longDescription,
-                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(height: 1.6),
+                    style: Theme.of(
+                      context,
+                    ).textTheme.bodyLarge?.copyWith(height: 1.6),
                   ),
                   const SizedBox(height: 24),
 
@@ -495,11 +522,26 @@ class _ProjectsSectionState extends State<ProjectsSection> {
                     runSpacing: 16,
                     children: [
                       if (project.duration.isNotEmpty)
-                        _buildInfoItem(context, FontAwesomeIcons.clock, 'Duration', project.duration),
+                        _buildInfoItem(
+                          context,
+                          FontAwesomeIcons.clock,
+                          'Duration',
+                          project.duration,
+                        ),
                       if (project.role.isNotEmpty)
-                        _buildInfoItem(context, FontAwesomeIcons.userTie, 'Role', project.role),
+                        _buildInfoItem(
+                          context,
+                          FontAwesomeIcons.userTie,
+                          'Role',
+                          project.role,
+                        ),
                       if (project.team.isNotEmpty)
-                        _buildInfoItem(context, FontAwesomeIcons.users, 'Team', project.team),
+                        _buildInfoItem(
+                          context,
+                          FontAwesomeIcons.users,
+                          'Team',
+                          project.team,
+                        ),
                     ],
                   ),
                   const SizedBox(height: 24),
@@ -508,8 +550,8 @@ class _ProjectsSectionState extends State<ProjectsSection> {
                   Text(
                     'Technologies Used',
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                   const SizedBox(height: 12),
                   Wrap(
@@ -518,7 +560,9 @@ class _ProjectsSectionState extends State<ProjectsSection> {
                     children: project.technologies.map((tech) {
                       return Chip(
                         label: Text(tech),
-                        backgroundColor: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+                        backgroundColor: Theme.of(
+                          context,
+                        ).colorScheme.primary.withOpacity(0.1),
                       );
                     }).toList(),
                   ),
@@ -529,8 +573,8 @@ class _ProjectsSectionState extends State<ProjectsSection> {
                     Text(
                       'Key Features',
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     const SizedBox(height: 12),
                     ...project.features.map((feature) {
@@ -539,7 +583,7 @@ class _ProjectsSectionState extends State<ProjectsSection> {
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Icon(
+                            FaIcon(
                               FontAwesomeIcons.check,
                               size: 16,
                               color: Theme.of(context).colorScheme.primary,
@@ -559,28 +603,7 @@ class _ProjectsSectionState extends State<ProjectsSection> {
                   ],
 
                   // Action Buttons
-                  Row(
-                    children: [
-                      if (project.github.isNotEmpty)
-                        Expanded(
-                          child: OutlinedButton.icon(
-                            onPressed: () => UrlHelper.launchURL(project.github),
-                            icon: const Icon(FontAwesomeIcons.github),
-                            label: const Text('View Source Code'),
-                          ),
-                        ),
-                      if (project.github.isNotEmpty && project.liveUrl.isNotEmpty)
-                        const SizedBox(width: 16),
-                      if (project.liveUrl.isNotEmpty)
-                        Expanded(
-                          child: ElevatedButton.icon(
-                            onPressed: () => UrlHelper.launchURL(project.liveUrl),
-                            icon: const Icon(FontAwesomeIcons.arrowUpRightFromSquare),
-                            label: const Text('Visit Live Site'),
-                          ),
-                        ),
-                    ],
-                  ),
+                  ProjectLinks(project: project),
                 ],
               ),
             ),
@@ -590,11 +613,16 @@ class _ProjectsSectionState extends State<ProjectsSection> {
     );
   }
 
-  Widget _buildInfoItem(BuildContext context, IconData icon, String label, String value) {
+  Widget _buildInfoItem(
+    BuildContext context,
+    FaIconData icon,
+    String label,
+    String value,
+  ) {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(icon, size: 16, color: Theme.of(context).colorScheme.primary),
+        FaIcon(icon, size: 16, color: Theme.of(context).colorScheme.primary),
         const SizedBox(width: 8),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -602,14 +630,14 @@ class _ProjectsSectionState extends State<ProjectsSection> {
             Text(
               label,
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
-                  ),
+                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+              ),
             ),
             Text(
               value,
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    fontWeight: FontWeight.w500,
-                  ),
+              style: Theme.of(
+                context,
+              ).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w500),
             ),
           ],
         ),

@@ -28,7 +28,8 @@ class FlipCard3D extends StatefulWidget {
   State<FlipCard3D> createState() => _FlipCard3DState();
 }
 
-class _FlipCard3DState extends State<FlipCard3D> with SingleTickerProviderStateMixin {
+class _FlipCard3DState extends State<FlipCard3D>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _animation;
   bool _showFront = true;
@@ -36,8 +37,14 @@ class _FlipCard3DState extends State<FlipCard3D> with SingleTickerProviderStateM
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(vsync: this, duration: const Duration(milliseconds: 800));
-    _animation = Tween<double>(begin: 0, end: 1).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 800),
+    );
+    _animation = Tween<double>(
+      begin: 0,
+      end: 1,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
   }
 
   @override
@@ -72,7 +79,11 @@ class _FlipCard3DState extends State<FlipCard3D> with SingleTickerProviderStateM
           // Determine which side to show
           final isFront = angle < pi / 2;
 
-          return Transform(transform: transform, alignment: Alignment.center, child: isFront ? _buildFrontSide() : _buildBackSide());
+          return Transform(
+            transform: transform,
+            alignment: Alignment.center,
+            child: isFront ? _buildFrontSide() : _buildBackSide(),
+          );
         },
       ),
     );
@@ -85,35 +96,70 @@ class _FlipCard3DState extends State<FlipCard3D> with SingleTickerProviderStateM
       decoration: BoxDecoration(
         shape: widget.isCircle ? BoxShape.circle : BoxShape.rectangle,
         borderRadius: widget.isCircle ? null : BorderRadius.circular(20),
-        boxShadow: [BoxShadow(color: Theme.of(context).colorScheme.primary.withOpacity(0.3), blurRadius: 20, spreadRadius: 2)],
+        boxShadow: [
+          BoxShadow(
+            color: Theme.of(context).colorScheme.primary.withOpacity(0.3),
+            blurRadius: 20,
+            spreadRadius: 2,
+          ),
+        ],
       ),
       child: Stack(
         children: [
           // Image
           ClipRRect(
-            borderRadius: widget.isCircle ? BorderRadius.circular(widget.width / 2) : BorderRadius.circular(20),
-            child: Image.asset(
-              widget.imagePath,
-              width: widget.width,
-              height: widget.height,
-              fit: widget.imagefit,
-              errorBuilder: (context, error, stackTrace) {
-                return Container(
-                  width: widget.width,
-                  height: widget.height,
-                  decoration: BoxDecoration(
-                    shape: widget.isCircle ? BoxShape.circle : BoxShape.rectangle,
-                    borderRadius: widget.isCircle ? null : BorderRadius.circular(20),
-                    gradient: LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: [Theme.of(context).colorScheme.primary.withOpacity(0.3), Theme.of(context).colorScheme.secondary.withOpacity(0.3)],
-                    ),
+            borderRadius: widget.isCircle
+                ? BorderRadius.circular(widget.width / 2)
+                : BorderRadius.circular(20),
+            child: widget.imagePath.isEmpty
+                ? SizedBox(
+                    width: widget.width,
+                    height: widget.height,
+                    child: Icon(Icons.person, size: widget.width * 0.3),
+                  )
+                : Image(
+                    image:
+                        widget.imagePath.startsWith('http://') ||
+                            widget.imagePath.startsWith('https://')
+                        ? NetworkImage(widget.imagePath)
+                        : AssetImage(widget.imagePath) as ImageProvider,
+                    width: widget.width,
+                    height: widget.height,
+                    fit: widget.imagefit,
+                    errorBuilder: (context, error, stackTrace) {
+                      return Container(
+                        width: widget.width,
+                        height: widget.height,
+                        decoration: BoxDecoration(
+                          shape: widget.isCircle
+                              ? BoxShape.circle
+                              : BoxShape.rectangle,
+                          borderRadius: widget.isCircle
+                              ? null
+                              : BorderRadius.circular(20),
+                          gradient: LinearGradient(
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                            colors: [
+                              Theme.of(
+                                context,
+                              ).colorScheme.primary.withOpacity(0.3),
+                              Theme.of(
+                                context,
+                              ).colorScheme.secondary.withOpacity(0.3),
+                            ],
+                          ),
+                        ),
+                        child: Icon(
+                          Icons.person,
+                          size: widget.width * 0.3,
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.onSurface.withOpacity(0.5),
+                        ),
+                      );
+                    },
                   ),
-                  child: Icon(Icons.person, size: widget.width * 0.3, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5)),
-                );
-              },
-            ),
           ),
 
           // Tap indicator overlay
@@ -125,16 +171,27 @@ class _FlipCard3DState extends State<FlipCard3D> with SingleTickerProviderStateM
               decoration: BoxDecoration(
                 color: Theme.of(context).colorScheme.surface.withOpacity(0.9),
                 borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: Theme.of(context).colorScheme.primary.withOpacity(0.5), width: 1),
+                border: Border.all(
+                  color: Theme.of(context).colorScheme.primary.withOpacity(0.5),
+                  width: 1,
+                ),
               ),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(Icons.touch_app, size: 16, color: Theme.of(context).colorScheme.primary),
+                  Icon(
+                    Icons.touch_app,
+                    size: 16,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
                   const SizedBox(width: 4),
                   Text(
                     'Tap for 3D',
-                    style: TextStyle(color: Theme.of(context).colorScheme.onSurface, fontSize: 12, fontWeight: FontWeight.w500),
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.onSurface,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
                 ],
               ),
@@ -155,7 +212,13 @@ class _FlipCard3DState extends State<FlipCard3D> with SingleTickerProviderStateM
         decoration: BoxDecoration(
           shape: widget.isCircle ? BoxShape.circle : BoxShape.rectangle,
           borderRadius: widget.isCircle ? null : BorderRadius.circular(20),
-          boxShadow: [BoxShadow(color: Theme.of(context).colorScheme.secondary.withOpacity(0.3), blurRadius: 20, spreadRadius: 2)],
+          boxShadow: [
+            BoxShadow(
+              color: Theme.of(context).colorScheme.secondary.withOpacity(0.3),
+              blurRadius: 20,
+              spreadRadius: 2,
+            ),
+          ],
         ),
         child: Stack(
           children: [
@@ -163,18 +226,25 @@ class _FlipCard3DState extends State<FlipCard3D> with SingleTickerProviderStateM
             Container(
               decoration: BoxDecoration(
                 shape: widget.isCircle ? BoxShape.circle : BoxShape.rectangle,
-                borderRadius: widget.isCircle ? null : BorderRadius.circular(20),
+                borderRadius: widget.isCircle
+                    ? null
+                    : BorderRadius.circular(20),
                 gradient: LinearGradient(
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
-                  colors: [Theme.of(context).colorScheme.primary.withOpacity(0.1), Theme.of(context).colorScheme.secondary.withOpacity(0.1)],
+                  colors: [
+                    Theme.of(context).colorScheme.primary.withOpacity(0.1),
+                    Theme.of(context).colorScheme.secondary.withOpacity(0.1),
+                  ],
                 ),
               ),
             ),
 
             // 3D Model
             ClipRRect(
-              borderRadius: widget.isCircle ? BorderRadius.circular(widget.width / 2) : BorderRadius.circular(20),
+              borderRadius: widget.isCircle
+                  ? BorderRadius.circular(widget.width / 2)
+                  : BorderRadius.circular(20),
               child: Animated3DModel(
                 src: widget.modelSrc,
                 width: widget.width,
@@ -189,20 +259,36 @@ class _FlipCard3DState extends State<FlipCard3D> with SingleTickerProviderStateM
               bottom: 16,
               right: 16,
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 8,
+                ),
                 decoration: BoxDecoration(
                   color: Theme.of(context).colorScheme.surface.withOpacity(0.9),
                   borderRadius: BorderRadius.circular(20),
-                  border: Border.all(color: Theme.of(context).colorScheme.secondary.withOpacity(0.5), width: 1),
+                  border: Border.all(
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.secondary.withOpacity(0.5),
+                    width: 1,
+                  ),
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(Icons.flip_to_front, size: 16, color: Theme.of(context).colorScheme.secondary),
+                    Icon(
+                      Icons.flip_to_front,
+                      size: 16,
+                      color: Theme.of(context).colorScheme.secondary,
+                    ),
                     const SizedBox(width: 4),
                     Text(
                       'Tap to flip',
-                      style: TextStyle(color: Theme.of(context).colorScheme.onSurface, fontSize: 12, fontWeight: FontWeight.w500),
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.onSurface,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
                   ],
                 ),

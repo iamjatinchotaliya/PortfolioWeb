@@ -1,12 +1,10 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/themes/app_theme.dart';
 import '../../../core/utils/responsive_helper.dart';
 import '../../../core/constants/app_constants.dart';
-import '../../blocs/theme/theme_bloc.dart';
-import '../../blocs/theme/theme_event.dart';
-import '../../blocs/theme/theme_state.dart';
+import '../../providers/theme_provider.dart';
 
 class CustomNavBar extends StatefulWidget {
   final ScrollController scrollController;
@@ -159,14 +157,14 @@ class _CustomNavBarState extends State<CustomNavBar> {
   Widget _buildActions() {
     return Row(
       children: [
-        BlocBuilder<ThemeBloc, ThemeState>(
-          builder: (context, state) {
-            final isDark = state.themeMode == ThemeMode.dark;
+        Consumer(
+          builder: (context, ref, child) {
+            final isDark = ref.watch(themeProvider) == ThemeMode.dark;
             return MouseRegion(
               cursor: SystemMouseCursors.click,
               child: GestureDetector(
                 onTap: () {
-                  context.read<ThemeBloc>().add(const ToggleThemeEvent());
+                  ref.read(themeProvider.notifier).toggleTheme();
                 },
                 child: TweenAnimationBuilder<double>(
                   duration: const Duration(milliseconds: 400),

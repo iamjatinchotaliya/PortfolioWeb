@@ -1,7 +1,8 @@
-import 'dart:math';
+import 'dart:async';
+import 'dart:math' as math;
 import 'package:flutter/material.dart';
-import '../../../core/themes/app_theme.dart';
 
+/// An indeterminate introduction shown only while portfolio data is pending.
 class PortfolioLoader extends StatefulWidget {
   const PortfolioLoader({super.key});
 
@@ -9,275 +10,369 @@ class PortfolioLoader extends StatefulWidget {
   State<PortfolioLoader> createState() => _PortfolioLoaderState();
 }
 
-class _PortfolioLoaderState extends State<PortfolioLoader> with TickerProviderStateMixin {
-  late AnimationController _rotationController;
-  late AnimationController _pulseController;
-  late AnimationController _particleController;
-  late List<Particle> _particles;
+class _PortfolioLoaderState extends State<PortfolioLoader>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _motion;
+  late final Timer _slowRequestTimer;
+  bool _takingLonger = false;
+  bool _reduceMotion = false;
 
   @override
   void initState() {
     super.initState();
-
-    _rotationController = AnimationController(vsync: this, duration: const Duration(seconds: 3))..repeat();
-
-    _pulseController = AnimationController(vsync: this, duration: const Duration(milliseconds: 1500))..repeat(reverse: true);
-
-    _particleController = AnimationController(vsync: this, duration: const Duration(seconds: 4))..repeat();
-
-    _particles = List.generate(
-      20,
-      (index) => Particle(
-        angle: (index * 2 * pi) / 20,
-        distance: 80.0 + (index % 3) * 30,
-        size: 3.0 + Random().nextDouble() * 4,
-        speed: 0.5 + Random().nextDouble() * 0.5,
-      ),
+    _motion = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 6),
     );
+    _slowRequestTimer = Timer(const Duration(seconds: 8), () {
+      if (mounted) setState(() => _takingLonger = true);
+    });
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _reduceMotion = MediaQuery.disableAnimationsOf(context);
+    if (_reduceMotion) {
+      _motion.stop();
+      _motion.value = 0.25;
+    } else if (!_motion.isAnimating) {
+      _motion.repeat();
+    }
   }
 
   @override
   void dispose() {
-    _rotationController.dispose();
-    _pulseController.dispose();
-    _particleController.dispose();
+    _slowRequestTimer.cancel();
+    _motion.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: _rotationController,
-      builder: (context, child) {
-        return Container(
-          width: double.infinity,
-          height: double.infinity,
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                Theme.of(context).scaffoldBackgroundColor,
-                Theme.of(context).colorScheme.primary.withOpacity(0.08),
-                Theme.of(context).colorScheme.secondary.withOpacity(0.05),
-                AppTheme.primaryGradient[0].withOpacity(0.03),
-              ],
-              stops: const [0.0, 0.4, 0.7, 1.0],
-            ),
-          ),
-          child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                // Main animated loader
-                SizedBox(
-                  width: 200,
-                  height: 200,
-                  child: Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      // Outer rotating ring with enhanced gradient
-                      AnimatedBuilder(
-                        animation: _rotationController,
-                        builder: (context, child) {
-                          return Transform.rotate(
-                            angle: _rotationController.value * 2 * pi,
-                            child: Container(
-                              width: 180,
-                              height: 180,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                gradient: SweepGradient(
-                                  colors: [
-                                    AppTheme.primaryGradient[0],
-                                    AppTheme.primaryGradient[1],
-                                    Theme.of(context).colorScheme.secondary,
-                                    AppTheme.primaryGradient[0].withOpacity(0.8),
-                                    AppTheme.primaryGradient[0],
-                                  ],
-                                  stops: const [0.0, 0.25, 0.5, 0.75, 1.0],
-                                ),
-                              ),
-                              child: Container(
-                                margin: const EdgeInsets.all(8),
-                                decoration: BoxDecoration(shape: BoxShape.circle, color: Theme.of(context).scaffoldBackgroundColor),
-                              ),
-                            ),
-                          );
-                        },
-                      ),
+    final dark = Theme.of(context).brightness == Brightness.dark;
+    final ink = dark ? const Color(0xFFF0F4FF) : const Color(0xFF14213D);
+    final muted = dark ? const Color(0xFF9AAAC5) : const Color(0xFF596A84);
+    final cyan = dark ? const Color(0xFF67E8F9) : const Color(0xFF007F9E);
+    const violet = Color(0xFF9D83F3);
+    final background = dark ? const Color(0xFF090F20) : const Color(0xFFF6F8FD);
 
-                      // Middle pulsing circle with vibrant gradient
-                      AnimatedBuilder(
-                        animation: _pulseController,
-                        builder: (context, child) {
-                          final scale = 0.7 + (_pulseController.value * 0.3);
-                          final opacity = 0.2 + (_pulseController.value * 0.3);
-                          return Transform.scale(
-                            scale: scale,
-                            child: Container(
-                              width: 120,
-                              height: 120,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                gradient: RadialGradient(
-                                  colors: [
-                                    AppTheme.primaryGradient[0].withOpacity(opacity),
-                                    AppTheme.primaryGradient[1].withOpacity(opacity * 0.7),
-                                    Theme.of(context).colorScheme.secondary.withOpacity(opacity * 0.5),
-                                    Colors.transparent,
-                                  ],
-                                  stops: const [0.0, 0.4, 0.7, 1.0],
-                                ),
-                              ),
-                            ),
-                          );
-                        },
-                      ),
-
-                      // Floating particles
-                      AnimatedBuilder(
-                        animation: _particleController,
-                        builder: (context, child) {
-                          return CustomPaint(
-                            size: const Size(200, 200),
-                            painter: ParticlePainter(
-                              particles: _particles,
-                              animation: _particleController.value,
-                              primaryColor: Theme.of(context).colorScheme.primary,
-                            ),
-                          );
-                        },
-                      ),
-
-                      // Center icon with gradient and glow
-                      AnimatedBuilder(
-                        animation: _rotationController,
-                        builder: (context, child) {
-                          return Transform.rotate(
-                            angle: -_rotationController.value * 2 * pi,
-                            child: Container(
-                              width: 60,
-                              height: 60,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                gradient: LinearGradient(
-                                  colors: [AppTheme.primaryGradient[0], AppTheme.primaryGradient[1], Theme.of(context).colorScheme.secondary],
-                                  begin: Alignment.topLeft,
-                                  end: Alignment.bottomRight,
-                                ),
-                                boxShadow: [
-                                  BoxShadow(color: AppTheme.primaryGradient[0].withOpacity(0.6), blurRadius: 25, spreadRadius: 3),
-                                  BoxShadow(color: AppTheme.primaryGradient[1].withOpacity(0.4), blurRadius: 15, spreadRadius: 1),
-                                ],
-                              ),
-                              child: const Icon(Icons.code, color: Colors.white, size: 30),
-                            ),
-                          );
-                        },
-                      ),
+    return Semantics(
+      container: true,
+      liveRegion: true,
+      label: _takingLonger
+          ? 'Still loading portfolio. Thank you for your patience.'
+          : 'Loading portfolio. Preparing projects, skills and stories.',
+      child: ExcludeSemantics(
+        child: ColoredBox(
+          color: background,
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              DecoratedBox(
+                decoration: BoxDecoration(
+                  gradient: RadialGradient(
+                    center: const Alignment(0, -0.25),
+                    radius: 0.85,
+                    colors: [
+                      cyan.withValues(alpha: dark ? 0.08 : 0.045),
+                      background,
                     ],
                   ),
                 ),
-
-                const SizedBox(height: 40),
-
-                // Loading text with animation
-                AnimatedBuilder(
-                  animation: _pulseController,
-                  builder: (context, child) {
-                    return Opacity(
-                      opacity: 0.5 + (_pulseController.value * 0.5),
-                      child: ShaderMask(
-                        shaderCallback: (bounds) {
-                          return LinearGradient(colors: AppTheme.primaryGradient).createShader(bounds);
-                        },
-                        child: Text(
-                          'Loading Portfolio',
-                          style: Theme.of(
-                            context,
-                          ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold, color: Colors.white, letterSpacing: 2),
+              ),
+              CustomPaint(painter: _GridPainter(ink.withValues(alpha: 0.07))),
+              SafeArea(
+                child: LayoutBuilder(
+                  builder: (context, constraints) {
+                    return SingleChildScrollView(
+                      child: ConstrainedBox(
+                        constraints: BoxConstraints(
+                          minHeight: constraints.maxHeight,
+                        ),
+                        child: Center(
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 28,
+                              vertical: 32,
+                            ),
+                            child: ConstrainedBox(
+                              constraints: const BoxConstraints(maxWidth: 460),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    'PORTFOLIO',
+                                    style: TextStyle(
+                                      color: muted,
+                                      fontSize: 11,
+                                      letterSpacing: 4,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 28),
+                                  SizedBox(
+                                    width: 240,
+                                    height: 240,
+                                    child: Stack(
+                                      alignment: Alignment.center,
+                                      children: [
+                                        RepaintBoundary(
+                                          child: CustomPaint(
+                                            size: const Size(240, 240),
+                                            painter: _OrbitPainter(
+                                              motion: _motion,
+                                              cyan: cyan,
+                                              violet: violet,
+                                              dark: dark,
+                                            ),
+                                          ),
+                                        ),
+                                        Transform.rotate(
+                                          angle: -0.06,
+                                          child: Container(
+                                            width: 96,
+                                            height: 96,
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(28),
+                                              gradient: LinearGradient(
+                                                begin: Alignment.topLeft,
+                                                end: Alignment.bottomRight,
+                                                colors: dark
+                                                    ? [
+                                                        const Color(0xFF1C3046),
+                                                        const Color(0xFF131C32),
+                                                      ]
+                                                    : [
+                                                        Colors.white,
+                                                        const Color(0xFFEBF2FC),
+                                                      ],
+                                              ),
+                                              border: Border.all(
+                                                color: cyan.withValues(
+                                                  alpha: 0.3,
+                                                ),
+                                              ),
+                                              boxShadow: [
+                                                BoxShadow(
+                                                  color: cyan.withValues(
+                                                    alpha: 0.12,
+                                                  ),
+                                                  blurRadius: 48,
+                                                  spreadRadius: 4,
+                                                ),
+                                                BoxShadow(
+                                                  color: background.withValues(
+                                                    alpha: 0.7,
+                                                  ),
+                                                  blurRadius: 12,
+                                                  offset: const Offset(0, 12),
+                                                ),
+                                              ],
+                                            ),
+                                            child: Center(
+                                              child: Text(
+                                                '</>',
+                                                style: TextStyle(
+                                                  fontFamily: 'monospace',
+                                                  fontSize: 32,
+                                                  fontWeight: FontWeight.w600,
+                                                  color: cyan,
+                                                  letterSpacing: -3,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  const SizedBox(height: 24),
+                                  Text(
+                                    'Crafting your first impression.',
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      color: ink,
+                                      fontSize: 28,
+                                      height: 1.25,
+                                      letterSpacing: -0.8,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 14),
+                                  Text(
+                                    'A collection of projects, skills and stories.',
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      color: muted,
+                                      fontSize: 14,
+                                      height: 1.6,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 32),
+                                  RepaintBoundary(
+                                    child: SizedBox(
+                                      width: 180,
+                                      height: 3,
+                                      child: CustomPaint(
+                                        painter: _LoadingLinePainter(
+                                          motion: _motion,
+                                          color: cyan,
+                                          reduced: _reduceMotion,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 18),
+                                  AnimatedSwitcher(
+                                    duration: _reduceMotion
+                                        ? Duration.zero
+                                        : const Duration(milliseconds: 300),
+                                    child: Text(
+                                      _takingLonger
+                                          ? 'Still connecting. Thank you for your patience.'
+                                          : 'Preparing your visit',
+                                      key: ValueKey(_takingLonger),
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        color: muted,
+                                        fontSize: 12,
+                                        height: 1.5,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
                         ),
                       ),
                     );
                   },
                 ),
-
-                const SizedBox(height: 16),
-
-                // Animated dots with gradient colors
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: List.generate(3, (index) {
-                    final colors = [AppTheme.primaryGradient[0], AppTheme.primaryGradient[1], Theme.of(context).colorScheme.secondary];
-                    return AnimatedBuilder(
-                      animation: _pulseController,
-                      builder: (context, child) {
-                        final delay = index * 0.2;
-                        final value = (_pulseController.value + delay) % 1.0;
-                        return Container(
-                          margin: const EdgeInsets.symmetric(horizontal: 6),
-                          width: 10,
-                          height: 10,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            gradient: RadialGradient(colors: [colors[index].withOpacity(value), colors[index].withOpacity(value * 0.5)]),
-                            boxShadow: [BoxShadow(color: colors[index].withOpacity(value * 0.5), blurRadius: 8, spreadRadius: 1)],
-                          ),
-                        );
-                      },
-                    );
-                  }),
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
-        );
-      },
+        ),
+      ),
     );
   }
 }
 
-class Particle {
-  final double angle;
-  final double distance;
-  final double size;
-  final double speed;
-
-  Particle({required this.angle, required this.distance, required this.size, required this.speed});
-}
-
-class ParticlePainter extends CustomPainter {
-  final List<Particle> particles;
-  final double animation;
-  final Color primaryColor;
-
-  ParticlePainter({required this.particles, required this.animation, required this.primaryColor});
+class _OrbitPainter extends CustomPainter {
+  _OrbitPainter({
+    required this.motion,
+    required this.cyan,
+    required this.violet,
+    required this.dark,
+  }) : super(repaint: motion);
+  final Animation<double> motion;
+  final Color cyan;
+  final Color violet;
+  final bool dark;
 
   @override
   void paint(Canvas canvas, Size size) {
-    final center = Offset(size.width / 2, size.height / 2);
-
-    for (var particle in particles) {
-      final animatedAngle = particle.angle + (animation * 2 * pi * particle.speed);
-      final x = center.dx + cos(animatedAngle) * particle.distance;
-      final y = center.dy + sin(animatedAngle) * particle.distance;
-
-      final paint = Paint()
-        ..color = primaryColor.withOpacity(0.6)
-        ..style = PaintingStyle.fill;
-
-      canvas.drawCircle(Offset(x, y), particle.size, paint);
-
-      // Glow effect
-      final glowPaint = Paint()
-        ..color = primaryColor.withOpacity(0.3)
-        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 4);
-
-      canvas.drawCircle(Offset(x, y), particle.size * 1.5, glowPaint);
+    final center = size.center(Offset.zero);
+    final phase = motion.value * math.pi * 2;
+    final paint = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1;
+    for (var ring = 0; ring < 2; ring++) {
+      final radius = ring == 0 ? 88.0 : 112.0;
+      final color = ring == 0 ? cyan : violet;
+      paint.color = color.withValues(alpha: 0.14);
+      canvas.drawCircle(center, radius, paint);
+      final angle = ring == 0 ? phase : -phase + math.pi;
+      paint
+        ..color = color.withValues(alpha: 0.65)
+        ..strokeCap = StrokeCap.round;
+      canvas.drawArc(
+        Rect.fromCircle(center: center, radius: radius),
+        angle - 0.6,
+        0.6,
+        false,
+        paint,
+      );
+      final point = center + Offset(math.cos(angle), math.sin(angle)) * radius;
+      canvas.drawCircle(
+        point,
+        8,
+        Paint()..color = color.withValues(alpha: 0.12),
+      );
+      canvas.drawCircle(point, 3, Paint()..color = color);
+    }
+    for (var i = 0; i < 4; i++) {
+      final angle = i * math.pi / 2 + 0.4;
+      final point = center + Offset(math.cos(angle), math.sin(angle)) * 103;
+      final alpha = 0.2 + 0.3 * (0.5 + 0.5 * math.sin(phase + i));
+      canvas.drawCircle(
+        point,
+        1.5,
+        Paint()..color = cyan.withValues(alpha: alpha),
+      );
     }
   }
 
   @override
-  bool shouldRepaint(ParticlePainter oldDelegate) => true;
+  bool shouldRepaint(_OrbitPainter old) =>
+      old.cyan != cyan ||
+      old.violet != violet ||
+      old.dark != dark ||
+      old.motion != motion;
+}
+
+class _LoadingLinePainter extends CustomPainter {
+  _LoadingLinePainter({
+    required this.motion,
+    required this.color,
+    required this.reduced,
+  }) : super(repaint: motion);
+  final Animation<double> motion;
+  final Color color;
+  final bool reduced;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final bounds = Offset.zero & size;
+    canvas.clipRRect(RRect.fromRectAndRadius(bounds, const Radius.circular(2)));
+    canvas.drawRect(bounds, Paint()..color = color.withValues(alpha: 0.13));
+    final phase = reduced ? 0.5 : (motion.value * 3) % 1;
+    final left = -size.width * 0.5 + phase * size.width * 1.5;
+    final highlight = Rect.fromLTWH(left, 0, size.width * 0.5, size.height);
+    canvas.drawRect(
+      highlight,
+      Paint()
+        ..shader = LinearGradient(
+          colors: [
+            color.withValues(alpha: 0),
+            color,
+            color.withValues(alpha: 0),
+          ],
+        ).createShader(highlight),
+    );
+  }
+
+  @override
+  bool shouldRepaint(_LoadingLinePainter old) =>
+      old.color != color || old.reduced != reduced || old.motion != motion;
+}
+
+class _GridPainter extends CustomPainter {
+  const _GridPainter(this.color);
+  final Color color;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()..color = color;
+    for (var x = 16.0; x < size.width; x += 32) {
+      for (var y = 16.0; y < size.height; y += 32) {
+        canvas.drawCircle(Offset(x, y), 0.65, paint);
+      }
+    }
+  }
+
+  @override
+  bool shouldRepaint(_GridPainter old) => old.color != color;
 }

@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../data/repositories/data_repository.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/constants/app_constants.dart';
-import '../blocs/portfolio/portfolio_bloc.dart';
-import '../blocs/portfolio/portfolio_event.dart';
-import '../blocs/portfolio/portfolio_state.dart';
+import '../providers/portfolio_provider.dart';
 import '../widgets/navigation/custom_navbar.dart';
 import '../widgets/sections/hero_section.dart';
 import '../widgets/sections/about_section.dart';
@@ -23,66 +20,98 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => PortfolioBloc(repository: DataRepository())..add(const LoadPortfolioData()),
-      child: const HomePageView(),
-    );
+    return const HomePageView();
   }
 }
 
-class HomePageView extends StatelessWidget {
+class HomePageView extends ConsumerStatefulWidget {
   const HomePageView({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final scrollController = ScrollController();
-    final Map<String, GlobalKey> sectionKeys = {
-      AppConstants.homeSectionId: GlobalKey(),
-      AppConstants.aboutSectionId: GlobalKey(),
-      AppConstants.skillsSectionId: GlobalKey(),
-      AppConstants.projectsSectionId: GlobalKey(),
-      AppConstants.experienceSectionId: GlobalKey(),
-      AppConstants.blogSectionId: GlobalKey(),
-      AppConstants.contactSectionId: GlobalKey(),
-    };
+  ConsumerState<HomePageView> createState() => _HomePageViewState();
+}
 
-    void scrollToSection(String sectionId) {
-      final key = sectionKeys[sectionId];
-      if (key?.currentContext != null) {
-        Scrollable.ensureVisible(key!.currentContext!, duration: const Duration(milliseconds: 800), curve: Curves.easeInOut);
-      }
+class _HomePageViewState extends ConsumerState<HomePageView> {
+  final scrollController = ScrollController();
+  final Map<String, GlobalKey> sectionKeys = {
+    AppConstants.homeSectionId: GlobalKey(),
+    AppConstants.aboutSectionId: GlobalKey(),
+    AppConstants.skillsSectionId: GlobalKey(),
+    AppConstants.projectsSectionId: GlobalKey(),
+    AppConstants.experienceSectionId: GlobalKey(),
+    AppConstants.blogSectionId: GlobalKey(),
+    AppConstants.contactSectionId: GlobalKey(),
+  };
+
+  @override
+  void dispose() {
+    scrollController.dispose();
+    super.dispose();
+  }
+
+  void scrollToSection(String sectionId) {
+    final key = sectionKeys[sectionId];
+    if (key?.currentContext != null) {
+      Scrollable.ensureVisible(
+        key!.currentContext!,
+        duration: const Duration(milliseconds: 800),
+        curve: Curves.easeInOut,
+      );
     }
+  }
 
+  @override
+  Widget build(BuildContext context) {
+    final portfolio = ref.watch(portfolioProvider);
     return Scaffold(
-      body: BlocBuilder<PortfolioBloc, PortfolioState>(
-        builder: (context, state) {
-          if (state is PortfolioLoading) {
-            return const PortfolioLoader();
-          }
-
-          if (state is PortfolioError) {
+      body: TweenAnimationBuilder<double>(
+        key: ValueKey(
+          portfolio.isLoading
+              ? 'loading'
+              : portfolio.hasError
+              ? 'error'
+              : 'content',
+        ),
+        tween: Tween(begin: portfolio.hasValue ? 0.0 : 1.0, end: 1.0),
+        duration: MediaQuery.disableAnimationsOf(context)
+            ? Duration.zero
+            : const Duration(milliseconds: 450),
+        curve: Curves.easeOutCubic,
+        builder: (context, opacity, child) =>
+            Opacity(opacity: opacity, child: child),
+        child: portfolio.when(
+          skipLoadingOnRefresh: false,
+          loading: () => const PortfolioLoader(),
+          error: (error, stackTrace) {
             return Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const Icon(Icons.error_outline, size: 64, color: Colors.red),
                   const SizedBox(height: 16),
-                  Text('Failed to load portfolio data', style: Theme.of(context).textTheme.headlineSmall),
+                  Text(
+                    'Failed to load portfolio data',
+                    style: Theme.of(context).textTheme.headlineSmall,
+                  ),
                   const SizedBox(height: 8),
-                  Text(state.message, style: Theme.of(context).textTheme.bodyMedium, textAlign: TextAlign.center),
+                  Text(
+                    'Error loading data: $error',
+                    style: Theme.of(context).textTheme.bodyMedium,
+                    textAlign: TextAlign.center,
+                  ),
                   const SizedBox(height: 16),
                   ElevatedButton(
                     onPressed: () {
-                      context.read<PortfolioBloc>().add(const LoadPortfolioData());
+                      ref.read(dataRepositoryProvider).clearCache();
+                      ref.invalidate(portfolioProvider);
                     },
                     child: const Text('Retry'),
                   ),
                 ],
               ),
             );
-          }
-
-          if (state is PortfolioLoaded) {
+          },
+          data: (state) {
             return AnimatedBackground(
               child: CursorGlow(
                 child: Stack(
@@ -98,7 +127,10 @@ class HomePageView extends StatelessWidget {
                             child: RepaintBoundary(
                               child: Container(
                                 key: sectionKeys[AppConstants.homeSectionId],
-                                child: HeroSection(personalInfo: state.personalInfo, onNavigate: scrollToSection),
+                                child: HeroSection(
+                                  personalInfo: state.personalInfo,
+                                  onNavigate: scrollToSection,
+                                ),
                               ),
                             ),
                           ),
@@ -108,7 +140,9 @@ class HomePageView extends StatelessWidget {
                             child: RepaintBoundary(
                               child: Container(
                                 key: sectionKeys[AppConstants.aboutSectionId],
-                                child: AboutSection(personalInfo: state.personalInfo),
+                                child: AboutSection(
+                                  personalInfo: state.personalInfo,
+                                ),
                               ),
                             ),
                           ),
@@ -118,7 +152,9 @@ class HomePageView extends StatelessWidget {
                             child: RepaintBoundary(
                               child: Container(
                                 key: sectionKeys[AppConstants.skillsSectionId],
-                                child: SkillsSection(skillCategories: state.skillCategories),
+                                child: SkillsSection(
+                                  skillCategories: state.skillCategories,
+                                ),
                               ),
                             ),
                           ),
@@ -127,8 +163,11 @@ class HomePageView extends StatelessWidget {
                           SliverToBoxAdapter(
                             child: RepaintBoundary(
                               child: Container(
-                                key: sectionKeys[AppConstants.projectsSectionId],
-                                child: ProjectsSection(projects: state.projects),
+                                key:
+                                    sectionKeys[AppConstants.projectsSectionId],
+                                child: ProjectsSection(
+                                  projects: state.projects,
+                                ),
                               ),
                             ),
                           ),
@@ -137,8 +176,12 @@ class HomePageView extends StatelessWidget {
                           SliverToBoxAdapter(
                             child: RepaintBoundary(
                               child: Container(
-                                key: sectionKeys[AppConstants.experienceSectionId],
-                                child: ExperienceSection(experiences: state.experiences),
+                                key:
+                                    sectionKeys[AppConstants
+                                        .experienceSectionId],
+                                child: ExperienceSection(
+                                  experiences: state.experiences,
+                                ),
                               ),
                             ),
                           ),
@@ -172,7 +215,10 @@ class HomePageView extends StatelessWidget {
                       left: 0,
                       right: 0,
                       child: RepaintBoundary(
-                        child: CustomNavBar(scrollController: scrollController, onNavItemTap: scrollToSection),
+                        child: CustomNavBar(
+                          scrollController: scrollController,
+                          onNavItemTap: scrollToSection,
+                        ),
                       ),
                     ),
 
@@ -182,10 +228,8 @@ class HomePageView extends StatelessWidget {
                 ),
               ),
             );
-          }
-
-          return const SizedBox.shrink();
-        },
+          },
+        ),
       ),
     );
   }

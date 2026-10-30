@@ -1,6 +1,8 @@
 # 🎨 Modern Flutter Web Portfolio
 
-A fully responsive, highly animated, production-ready Flutter web portfolio built with world-class architecture, BLoC pattern for state management, and GoRouter for navigation. Features stunning animations, light/dark themes, 3D elements, and comprehensive data-driven content.
+**Python API integration:** Follow [API_SETUP.md](API_SETUP.md) to run this app with the sibling `my_portfolio` backend. The live API replaces bundled portfolio JSON and the demo contact submission. Older architecture examples below are retained for reference.
+
+A fully responsive, highly animated, production-ready Flutter web portfolio built with world-class architecture, Riverpod for state management, and GoRouter for navigation. Features stunning animations, light/dark themes, 3D elements, and comprehensive data-driven content.
 
 ## ✨ Features
 
@@ -10,9 +12,9 @@ A fully responsive, highly animated, production-ready Flutter web portfolio buil
 - **📱 Fully Responsive**: Optimized for mobile, tablet, desktop, and large screens
 - **🎭 Rich Animations**: Scroll reveals, hover effects, micro-interactions, and page transitions
 - **🎨 Modern UI**: Clean, professional design with gradient accents and glassmorphism
-- **🔄 BLoC Pattern**: Clean architecture with proper state management
+- **🔄 Riverpod**: Clean architecture with proper state management
 - **🧭 GoRouter Navigation**: Deep linking support and smooth route transitions
-- **📊 Data-Driven**: All content loaded from JSON files for easy customization
+- **📊 Data-Driven**: Public content loaded from the my_portfolio Python API
 
 ### 🎬 Animation Features
 
@@ -41,7 +43,7 @@ A fully responsive, highly animated, production-ready Flutter web portfolio buil
 - **Accessibility**: ARIA labels and keyboard navigation support
 - **Type Safety**: Strongly typed models with Equatable
 - **Repository Pattern**: Clean data layer architecture
-- **Singleton Pattern**: Efficient data caching
+- **Shared Repository**: In-flight request deduplication and cached API content
 - **Google Fonts**: Beautiful typography with Inter and Poppins
 
 ## 📁 Project Structure
@@ -147,76 +149,7 @@ flutter build ios --release  # iOS
 
 ## 🎨 Customization Guide
 
-### 1. Update Personal Information
-
-Edit `assets/data/personal_info.json`:
-
-```json
-{
-  "name": "Your Name",
-  "title": "Your Title",
-  "tagline": "Your Tagline",
-  "bio": "Your bio...",
-  "email": "your@email.com",
-  "phone": "+1 234 567 8900",
-  ...
-}
-```
-
-### 2. Add Your Skills
-
-Edit `assets/data/skills.json`:
-
-```json
-{
-  "categories": [
-    {
-      "name": "Frontend Development",
-      "icon": "web",
-      "skills": [
-        {
-          "name": "Flutter",
-          "level": 95,
-          "icon": "flutter",
-          "color": "#02569B"
-        }
-      ]
-    }
-  ]
-}
-```
-
-### 3. Add Your Projects
-
-Edit `assets/data/projects.json`:
-
-```json
-{
-  "projects": [
-    {
-      "id": "1",
-      "title": "Project Name",
-      "subtitle": "Project subtitle",
-      "description": "Short description",
-      "image": "assets/images/projects/project.jpg",
-      "technologies": ["Flutter", "Firebase"],
-      ...
-    }
-  ]
-}
-```
-
-### 4. Update Work Experience
-
-Edit `assets/data/experience.json` with your work history, education, and certifications.
-
-### 5. Add Blog Posts
-
-Edit `assets/data/blog.json` with your blog posts or articles.
-
-### 6. Configure Contact Information
-
-Edit `assets/data/contact.json` with your contact methods and social media links.
+Update portfolio content through the Python backend's authenticated admin API. The files in assets/data are legacy examples and are no longer loaded by the application.
 
 ### 7. Customize Theme Colors
 

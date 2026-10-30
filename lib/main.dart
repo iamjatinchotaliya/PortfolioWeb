@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 import 'core/themes/app_theme.dart';
 import 'core/utils/app_router.dart';
-import 'presentation/blocs/theme/theme_bloc.dart';
-import 'presentation/blocs/theme/theme_state.dart';
+import 'presentation/providers/theme_provider.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -16,24 +15,21 @@ void main() {
     debugPrint('Running in web mode with optimizations');
   }
 
-  runApp(const MyApp());
+  runApp(const ProviderScope(child: MyApp()));
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends ConsumerWidget {
   const MyApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => ThemeBloc(),
-      child: BlocBuilder<ThemeBloc, ThemeState>(
-        builder: (context, state) {
-          return MaterialApp.router(
+  Widget build(BuildContext context, WidgetRef ref) {
+    final themeMode = ref.watch(themeProvider);
+    return MaterialApp.router(
             title: 'Portfolio - Mobile App Developer',
             debugShowCheckedModeBanner: false,
             theme: AppTheme.lightTheme,
             darkTheme: AppTheme.darkTheme,
-            themeMode: state.themeMode,
+            themeMode: themeMode,
             routerConfig: AppRouter.router,
             // Performance optimizations
             scrollBehavior: const MaterialScrollBehavior().copyWith(scrollbars: false, physics: const BouncingScrollPhysics()),
@@ -46,9 +42,6 @@ class MyApp extends StatelessWidget {
                 const Breakpoint(start: 1921, end: double.infinity, name: '4K'),
               ],
             ),
-          );
-        },
-      ),
     );
   }
 }

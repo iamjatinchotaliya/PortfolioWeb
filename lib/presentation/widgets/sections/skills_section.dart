@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../core/utils/responsive_helper.dart';
 import '../../../data/models/skill.dart';
-import '../../blocs/filter/filter_bloc.dart';
-import '../../blocs/filter/filter_event.dart';
-import '../../blocs/filter/filter_state.dart';
+import '../../providers/filter_provider.dart';
 import '../common/animated_card.dart';
 import '../common/scroll_reveal_widget.dart';
 
@@ -16,7 +14,7 @@ class SkillsSection extends StatelessWidget {
 
   const SkillsSection({super.key, required this.skillCategories});
 
-  IconData _getCategoryIcon(String iconName) {
+  FaIconData _getCategoryIcon(String iconName) {
     switch (iconName.toLowerCase()) {
       case 'web':
         return FontAwesomeIcons.laptopCode;
@@ -39,64 +37,93 @@ class SkillsSection extends StatelessWidget {
   Widget build(BuildContext context) {
     final isMobile = ResponsiveHelper.isMobile(context);
 
-    return BlocProvider(
-      create: (context) => FilterBloc(),
-      child: Container(
-        width: double.infinity,
-        padding: ResponsiveHelper.getResponsivePadding(context).copyWith(top: isMobile ? 60 : 100, bottom: isMobile ? 60 : 100),
-        child: Center(
-          child: Container(
-            constraints: BoxConstraints(maxWidth: AppConstants.maxContentWidth),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Section Title
-                ScrollRevealWidget(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('Skills & Expertise', style: Theme.of(context).textTheme.displaySmall?.copyWith(fontWeight: FontWeight.bold)),
-                      const SizedBox(height: 8),
-                      Container(
-                        height: 4,
-                        width: 80,
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(colors: [Theme.of(context).colorScheme.primary, Theme.of(context).colorScheme.secondary]),
-                          borderRadius: BorderRadius.circular(2),
-                        ),
+    return Container(
+      width: double.infinity,
+      padding: ResponsiveHelper.getResponsivePadding(
+        context,
+      ).copyWith(top: isMobile ? 60 : 100, bottom: isMobile ? 60 : 100),
+      child: Center(
+        child: Container(
+          constraints: BoxConstraints(maxWidth: AppConstants.maxContentWidth),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Section Title
+              ScrollRevealWidget(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Skills & Expertise',
+                      style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                        fontWeight: FontWeight.bold,
                       ),
-                    ],
-                  ),
+                    ),
+                    const SizedBox(height: 8),
+                    Container(
+                      height: 4,
+                      width: 80,
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [
+                            Theme.of(context).colorScheme.primary,
+                            Theme.of(context).colorScheme.secondary,
+                          ],
+                        ),
+                        borderRadius: BorderRadius.circular(2),
+                      ),
+                    ),
+                  ],
                 ),
-                SizedBox(height: isMobile ? 32 : 48),
+              ),
+              SizedBox(height: isMobile ? 32 : 48),
 
-                // Category Tabs
-                ScrollRevealWidget(delay: const Duration(milliseconds: 200), child: _buildCategoryTabs(context, skillCategories)),
-                SizedBox(height: isMobile ? 32 : 48),
+              // Category Tabs
+              ScrollRevealWidget(
+                delay: const Duration(milliseconds: 200),
+                child: _buildCategoryTabs(context, skillCategories),
+              ),
+              SizedBox(height: isMobile ? 32 : 48),
 
-                // Skills Grid
-                ScrollRevealWidget(delay: const Duration(milliseconds: 400), child: _buildSkillsGrid(context, skillCategories)),
-              ],
-            ),
+              // Skills Grid
+              ScrollRevealWidget(
+                delay: const Duration(milliseconds: 400),
+                child: _buildSkillsGrid(context, skillCategories),
+              ),
+            ],
           ),
         ),
       ),
     );
   }
 
-  Widget _buildCategoryTabs(BuildContext context, List<SkillCategory> categories) {
+  Widget _buildCategoryTabs(
+    BuildContext context,
+    List<SkillCategory> categories,
+  ) {
     final isMobile = ResponsiveHelper.isMobile(context);
 
-    return BlocBuilder<FilterBloc, FilterState>(
-      builder: (context, state) {
+    return Consumer(
+      builder: (context, ref, child) {
+        final selectedCategory = ref.watch(
+          categoryFilterProvider(FilterSection.skills),
+        );
         if (isMobile) {
           return SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             child: Row(
               children: List.generate(
                 categories.length,
-                (index) =>
-                    Padding(padding: const EdgeInsets.only(right: 12), child: _buildCategoryTab(context, index, categories, state.selectedCategory)),
+                (index) => Padding(
+                  padding: const EdgeInsets.only(right: 12),
+                  child: _buildCategoryTab(
+                    context,
+                    ref,
+                    index,
+                    categories,
+                    selectedCategory,
+                  ),
+                ),
               ),
             ),
           );
@@ -105,44 +132,83 @@ class SkillsSection extends StatelessWidget {
         return Wrap(
           spacing: 16,
           runSpacing: 16,
-          children: List.generate(categories.length, (index) => _buildCategoryTab(context, index, categories, state.selectedCategory)),
+          children: List.generate(
+            categories.length,
+            (index) => _buildCategoryTab(
+              context,
+              ref,
+              index,
+              categories,
+              selectedCategory,
+            ),
+          ),
         );
       },
     );
   }
 
-  Widget _buildCategoryTab(BuildContext context, int index, List<SkillCategory> categories, String selectedCategory) {
+  Widget _buildCategoryTab(
+    BuildContext context,
+    WidgetRef ref,
+    int index,
+    List<SkillCategory> categories,
+    String selectedCategory,
+  ) {
     final category = categories[index];
-    final isSelected = selectedCategory.isEmpty ? index == 0 : category.name == selectedCategory;
+    final isSelected = selectedCategory.isEmpty
+        ? index == 0
+        : category.name == selectedCategory;
 
     return InkWell(
       onTap: () {
-        context.read<FilterBloc>().add(ChangeCategory(category.name));
+        ref
+            .read(categoryFilterProvider(FilterSection.skills).notifier)
+            .changeCategory(category.name);
       },
       borderRadius: BorderRadius.circular(30),
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 300),
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
         decoration: BoxDecoration(
-          color: isSelected ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.surface,
+          color: isSelected
+              ? Theme.of(context).colorScheme.primary
+              : Theme.of(context).colorScheme.surface,
           borderRadius: BorderRadius.circular(30),
           border: Border.all(
-            color: isSelected ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.outline.withOpacity(0.3),
+            color: isSelected
+                ? Theme.of(context).colorScheme.primary
+                : Theme.of(context).colorScheme.outline.withOpacity(0.3),
             width: 2,
           ),
           boxShadow: isSelected
-              ? [BoxShadow(color: Theme.of(context).colorScheme.primary.withOpacity(0.3), blurRadius: 12, offset: const Offset(0, 4))]
+              ? [
+                  BoxShadow(
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.primary.withOpacity(0.3),
+                    blurRadius: 12,
+                    offset: const Offset(0, 4),
+                  ),
+                ]
               : null,
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(_getCategoryIcon(category.icon), size: 18, color: isSelected ? Colors.white : Theme.of(context).colorScheme.onSurface),
+            FaIcon(
+              _getCategoryIcon(category.icon),
+              size: 18,
+              color: isSelected
+                  ? Colors.white
+                  : Theme.of(context).colorScheme.onSurface,
+            ),
             const SizedBox(width: 8),
             Text(
               category.name,
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                color: isSelected ? Colors.white : Theme.of(context).colorScheme.onSurface,
+                color: isSelected
+                    ? Colors.white
+                    : Theme.of(context).colorScheme.onSurface,
                 fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
               ),
             ),
@@ -152,13 +218,24 @@ class SkillsSection extends StatelessWidget {
     );
   }
 
-  Widget _buildSkillsGrid(BuildContext context, List<SkillCategory> categories) {
+  Widget _buildSkillsGrid(
+    BuildContext context,
+    List<SkillCategory> categories,
+  ) {
+    if (categories.isEmpty) {
+      return const Text('No skills have been added yet.');
+    }
     final isMobile = ResponsiveHelper.isMobile(context);
     final isTablet = ResponsiveHelper.isTablet(context);
 
-    return BlocBuilder<FilterBloc, FilterState>(
-      builder: (context, state) {
-        final selectedIndex = categories.indexWhere((cat) => cat.name == state.selectedCategory);
+    return Consumer(
+      builder: (context, ref, child) {
+        final selection = ref.watch(
+          categoryFilterProvider(FilterSection.skills),
+        );
+        final selectedIndex = categories.indexWhere(
+          (cat) => cat.name == selection,
+        );
         final currentIndex = selectedIndex == -1 ? 0 : selectedIndex;
         final selectedCategory = categories[currentIndex];
 
@@ -180,7 +257,12 @@ class SkillsSection extends StatelessWidget {
                 position: index,
                 duration: const Duration(milliseconds: 500),
                 columnCount: isMobile ? 1 : (isTablet ? 2 : 3),
-                child: SlideAnimation(verticalOffset: 50.0, child: FadeInAnimation(child: _buildSkillCard(context, skill))),
+                child: SlideAnimation(
+                  verticalOffset: 50.0,
+                  child: FadeInAnimation(
+                    child: _buildSkillCard(context, skill),
+                  ),
+                ),
               );
             },
           ),
@@ -200,21 +282,40 @@ class SkillsSection extends StatelessWidget {
               Container(
                 width: 40,
                 height: 40,
-                decoration: BoxDecoration(color: _parseColor(skill.color, context).withOpacity(0.1), borderRadius: BorderRadius.circular(8)),
-                child: Icon(FontAwesomeIcons.code, size: 20, color: _parseColor(skill.color, context)),
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  color: _parseColor(skill.color, context).withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: FaIcon(
+                  FontAwesomeIcons.code,
+                  size: 20,
+                  color: _parseColor(skill.color, context),
+                ),
               ),
               const SizedBox(width: 12),
               Expanded(
-                child: Text(skill.name, style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
+                child: Text(
+                  skill.name,
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
               ),
-              Text(
-                '${skill.level}%',
-                style: Theme.of(context).textTheme.titleSmall?.copyWith(color: Theme.of(context).colorScheme.primary, fontWeight: FontWeight.bold),
-              ),
+              if (skill.level > 0)
+                Text(
+                  '${skill.level}%',
+                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                    color: Theme.of(context).colorScheme.primary,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
             ],
           ),
-          const SizedBox(height: 20),
-          _buildProgressBar(context, skill),
+          if (skill.level > 0) ...[
+            const SizedBox(height: 20),
+            _buildProgressBar(context, skill),
+          ],
         ],
       ),
     );
@@ -235,7 +336,9 @@ class SkillsSection extends StatelessWidget {
                 value: value,
                 minHeight: 8,
                 backgroundColor: Theme.of(context).colorScheme.surface,
-                valueColor: AlwaysStoppedAnimation<Color>(_parseColor(skill.color, context)),
+                valueColor: AlwaysStoppedAnimation<Color>(
+                  _parseColor(skill.color, context),
+                ),
               ),
             ),
           ],

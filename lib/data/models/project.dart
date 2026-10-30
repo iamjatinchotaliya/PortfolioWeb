@@ -13,6 +13,8 @@ class Project extends Equatable {
   final List<String> features;
   final String github;
   final String liveUrl;
+  final String playStoreUrl;
+  final String appStoreUrl;
   final String videoUrl;
   final String model3d;
   final String status;
@@ -35,6 +37,8 @@ class Project extends Equatable {
     required this.features,
     required this.github,
     required this.liveUrl,
+    this.playStoreUrl = '',
+    this.appStoreUrl = '',
     required this.videoUrl,
     required this.model3d,
     required this.status,
@@ -59,6 +63,8 @@ class Project extends Equatable {
       features: List<String>.from(json['features'] as List),
       github: json['github'] as String,
       liveUrl: json['liveUrl'] as String,
+      playStoreUrl: json['playStoreUrl'] as String? ?? '',
+      appStoreUrl: json['appStoreUrl'] as String? ?? '',
       videoUrl: json['videoUrl'] as String,
       model3d: json['model3d'] as String,
       status: json['status'] as String,
@@ -84,6 +90,8 @@ class Project extends Equatable {
       'features': features,
       'github': github,
       'liveUrl': liveUrl,
+      'playStoreUrl': playStoreUrl,
+      'appStoreUrl': appStoreUrl,
       'videoUrl': videoUrl,
       'model3d': model3d,
       'status': status,
@@ -109,6 +117,8 @@ class Project extends Equatable {
     features,
     github,
     liveUrl,
+    playStoreUrl,
+    appStoreUrl,
     videoUrl,
     model3d,
     status,

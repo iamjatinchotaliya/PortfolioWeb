@@ -20,7 +20,20 @@ class ExperienceSection extends StatelessWidget {
       if (parts.length >= 2) {
         final year = parts[0];
         final month = int.parse(parts[1]);
-        const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        const months = [
+          'Jan',
+          'Feb',
+          'Mar',
+          'Apr',
+          'May',
+          'Jun',
+          'Jul',
+          'Aug',
+          'Sep',
+          'Oct',
+          'Nov',
+          'Dec',
+        ];
         return '${months[month - 1]} $year';
       }
       return dateString;
@@ -31,8 +44,12 @@ class ExperienceSection extends StatelessWidget {
 
   String _calculateDuration(String startDate, String? endDate) {
     try {
-      final start = DateTime.parse('$startDate-01');
-      final end = endDate != null ? DateTime.parse('$endDate-01') : DateTime.now();
+      final start = DateTime.parse(
+        startDate.length == 7 ? '$startDate-01' : startDate,
+      );
+      final end = endDate != null
+          ? DateTime.parse(endDate.length == 7 ? '$endDate-01' : endDate)
+          : DateTime.now();
       final months = (end.year - start.year) * 12 + end.month - start.month;
       final years = months ~/ 12;
       final remainingMonths = months % 12;
@@ -55,7 +72,9 @@ class ExperienceSection extends StatelessWidget {
 
     return Container(
       width: double.infinity,
-      padding: ResponsiveHelper.getResponsivePadding(context).copyWith(top: isMobile ? 60 : 100, bottom: isMobile ? 60 : 100),
+      padding: ResponsiveHelper.getResponsivePadding(
+        context,
+      ).copyWith(top: isMobile ? 60 : 100, bottom: isMobile ? 60 : 100),
       child: Center(
         child: Container(
           constraints: BoxConstraints(maxWidth: AppConstants.maxContentWidth),
@@ -67,13 +86,23 @@ class ExperienceSection extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Work Experience', style: Theme.of(context).textTheme.displaySmall?.copyWith(fontWeight: FontWeight.bold)),
+                    Text(
+                      'Work Experience',
+                      style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                     const SizedBox(height: 8),
                     Container(
                       height: 4,
                       width: 80,
                       decoration: BoxDecoration(
-                        gradient: LinearGradient(colors: [Theme.of(context).colorScheme.primary, Theme.of(context).colorScheme.secondary]),
+                        gradient: LinearGradient(
+                          colors: [
+                            Theme.of(context).colorScheme.primary,
+                            Theme.of(context).colorScheme.secondary,
+                          ],
+                        ),
                         borderRadius: BorderRadius.circular(2),
                       ),
                     ),
@@ -87,7 +116,11 @@ class ExperienceSection extends StatelessWidget {
                 delay: const Duration(milliseconds: 200),
                 child: Text(
                   'My professional journey and career highlights',
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7)),
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.onSurface.withOpacity(0.7),
+                  ),
                 ),
               ),
               SizedBox(height: isMobile ? 40 : 60),
@@ -129,7 +162,11 @@ class ExperienceSection extends StatelessWidget {
     );
   }
 
-  Widget _buildTimelineItem(BuildContext context, Experience experience, bool isLast) {
+  Widget _buildTimelineItem(
+    BuildContext context,
+    Experience experience,
+    bool isLast,
+  ) {
     final isMobile = ResponsiveHelper.isMobile(context);
 
     return IntrinsicHeight(
@@ -146,11 +183,24 @@ class ExperienceSection extends StatelessWidget {
                   width: 16,
                   height: 16,
                   decoration: BoxDecoration(
-                    color: experience.current ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.outline,
+                    color: experience.current
+                        ? Theme.of(context).colorScheme.primary
+                        : Theme.of(context).colorScheme.outline,
                     shape: BoxShape.circle,
-                    border: Border.all(color: Theme.of(context).colorScheme.surface, width: 3),
+                    border: Border.all(
+                      color: Theme.of(context).colorScheme.surface,
+                      width: 3,
+                    ),
                     boxShadow: experience.current
-                        ? [BoxShadow(color: Theme.of(context).colorScheme.primary.withOpacity(0.3), blurRadius: 8, spreadRadius: 2)]
+                        ? [
+                            BoxShadow(
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.primary.withOpacity(0.3),
+                              blurRadius: 8,
+                              spreadRadius: 2,
+                            ),
+                          ]
                         : null,
                   ),
                 ),
@@ -163,7 +213,12 @@ class ExperienceSection extends StatelessWidget {
                         gradient: LinearGradient(
                           begin: Alignment.topCenter,
                           end: Alignment.bottomCenter,
-                          colors: [Theme.of(context).colorScheme.outline, Theme.of(context).colorScheme.outline.withOpacity(0.3)],
+                          colors: [
+                            Theme.of(context).colorScheme.outline,
+                            Theme.of(
+                              context,
+                            ).colorScheme.outline.withOpacity(0.3),
+                          ],
                         ),
                       ),
                     ),
@@ -175,14 +230,22 @@ class ExperienceSection extends StatelessWidget {
           // Content
           Expanded(
             child: Padding(
-              padding: EdgeInsets.only(bottom: isLast ? 0 : (isMobile ? 40 : 60)),
+              padding: EdgeInsets.only(
+                bottom: isLast ? 0 : (isMobile ? 40 : 60),
+              ),
               child: AnimatedCard(
-                onTap: experience.website.isNotEmpty ? () => UrlHelper.launchURL(experience.website) : null,
-                child: Padding(
-                  padding: EdgeInsets.all(isMobile ? 20 : 28),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
+                onTap: experience.website.isNotEmpty
+                    ? () => UrlHelper.launchURL(experience.website)
+                    : null,
+                child: OverflowBox(
+                  alignment: Alignment.topCenter,
+                  maxHeight: double.infinity,
+                  child: Padding(
+                    padding: EdgeInsets.all(isMobile ? 20 : 28),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
                       // Header
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -191,16 +254,25 @@ class ExperienceSection extends StatelessWidget {
                           Container(
                             width: 56,
                             height: 56,
+                            alignment: Alignment.center,
                             decoration: BoxDecoration(
                               gradient: LinearGradient(
                                 colors: [
-                                  Theme.of(context).colorScheme.primary.withOpacity(0.2),
-                                  Theme.of(context).colorScheme.secondary.withOpacity(0.2),
+                                  Theme.of(
+                                    context,
+                                  ).colorScheme.primary.withOpacity(0.2),
+                                  Theme.of(
+                                    context,
+                                  ).colorScheme.secondary.withOpacity(0.2),
                                 ],
                               ),
                               borderRadius: BorderRadius.circular(12),
                             ),
-                            child: Icon(FontAwesomeIcons.building, size: 24, color: Theme.of(context).colorScheme.primary),
+                            child: FaIcon(
+                              FontAwesomeIcons.building,
+                              size: 24,
+                              color: Theme.of(context).colorScheme.primary,
+                            ),
                           ),
                           const SizedBox(width: 16),
                           Expanded(
@@ -209,25 +281,38 @@ class ExperienceSection extends StatelessWidget {
                               children: [
                                 Text(
                                   experience.position,
-                                  style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold, height: 1.2),
+                                  style: Theme.of(context).textTheme.titleLarge
+                                      ?.copyWith(
+                                        fontWeight: FontWeight.bold,
+                                        height: 1.2,
+                                      ),
                                 ),
                                 const SizedBox(height: 4),
                                 Text(
                                   experience.company,
-                                  style: Theme.of(
-                                    context,
-                                  ).textTheme.titleMedium?.copyWith(color: Theme.of(context).colorScheme.primary, fontWeight: FontWeight.w600),
+                                  style: Theme.of(context).textTheme.titleMedium
+                                      ?.copyWith(
+                                        color: Theme.of(
+                                          context,
+                                        ).colorScheme.primary,
+                                        fontWeight: FontWeight.w600,
+                                      ),
                                 ),
                               ],
                             ),
                           ),
                           if (experience.current)
                             Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 6,
+                              ),
                               decoration: BoxDecoration(
                                 color: Colors.green.withOpacity(0.1),
                                 borderRadius: BorderRadius.circular(12),
-                                border: Border.all(color: Colors.green.withOpacity(0.3)),
+                                border: Border.all(
+                                  color: Colors.green.withOpacity(0.3),
+                                ),
                               ),
                               child: Row(
                                 mainAxisSize: MainAxisSize.min,
@@ -235,12 +320,19 @@ class ExperienceSection extends StatelessWidget {
                                   Container(
                                     width: 6,
                                     height: 6,
-                                    decoration: const BoxDecoration(color: Colors.green, shape: BoxShape.circle),
+                                    decoration: const BoxDecoration(
+                                      color: Colors.green,
+                                      shape: BoxShape.circle,
+                                    ),
                                   ),
                                   const SizedBox(width: 6),
                                   Text(
                                     'Current',
-                                    style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.green, fontWeight: FontWeight.bold),
+                                    style: Theme.of(context).textTheme.bodySmall
+                                        ?.copyWith(
+                                          color: Colors.green,
+                                          fontWeight: FontWeight.bold,
+                                        ),
                                   ),
                                 ],
                               ),
@@ -259,9 +351,25 @@ class ExperienceSection extends StatelessWidget {
                             FontAwesomeIcons.calendar,
                             '${_formatDate(experience.startDate)} - ${_formatDate(experience.endDate)}',
                           ),
-                          _buildMetaItem(context, FontAwesomeIcons.clock, _calculateDuration(experience.startDate, experience.endDate)),
-                          _buildMetaItem(context, FontAwesomeIcons.locationDot, experience.location),
-                          _buildMetaItem(context, FontAwesomeIcons.briefcase, experience.type),
+                          _buildMetaItem(
+                            context,
+                            FontAwesomeIcons.clock,
+                            _calculateDuration(
+                              experience.startDate,
+                              experience.endDate,
+                            ),
+                          ),
+                          _buildMetaItem(
+                            context,
+                            FontAwesomeIcons.locationDot,
+                            experience.location,
+                          ),
+                          if (experience.type.isNotEmpty)
+                            _buildMetaItem(
+                              context,
+                              FontAwesomeIcons.briefcase,
+                              experience.type,
+                            ),
                         ],
                       ),
                       const SizedBox(height: 20),
@@ -269,25 +377,46 @@ class ExperienceSection extends StatelessWidget {
                       // Description
                       Text(
                         experience.description,
-                        style: Theme.of(
-                          context,
-                        ).textTheme.bodyLarge?.copyWith(height: 1.6, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.8)),
+                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                          height: 1.6,
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.onSurface.withOpacity(0.8),
+                        ),
                       ),
                       const SizedBox(height: 20),
 
                       // Responsibilities
                       if (experience.responsibilities.isNotEmpty) ...[
-                        Text('Key Responsibilities', style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
+                        Text(
+                          'Key Responsibilities',
+                          style: Theme.of(context).textTheme.titleMedium
+                              ?.copyWith(fontWeight: FontWeight.bold),
+                        ),
                         const SizedBox(height: 12),
-                        ...experience.responsibilities.take(3).map((responsibility) {
+                        ...experience.responsibilities.take(3).map((
+                          responsibility,
+                        ) {
                           return Padding(
                             padding: const EdgeInsets.only(bottom: 8),
                             child: Row(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Icon(FontAwesomeIcons.circleCheck, size: 16, color: Theme.of(context).colorScheme.primary),
+                                FaIcon(
+                                  FontAwesomeIcons.circleCheck,
+                                  size: 16,
+                                  color: Theme.of(context).colorScheme.primary,
+                                ),
                                 const SizedBox(width: 12),
-                                Expanded(child: Text(responsibility, style: Theme.of(context).textTheme.bodyMedium?.copyWith(height: 1.5))),
+                                Expanded(
+                                  child: Text(
+                                    responsibility,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyMedium
+                                        ?.copyWith(height: 1.5),
+                                  ),
+                                ),
                               ],
                             ),
                           );
@@ -297,7 +426,11 @@ class ExperienceSection extends StatelessWidget {
 
                       // Achievements
                       if (experience.achievements.isNotEmpty) ...[
-                        Text('Key Achievements', style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
+                        Text(
+                          'Key Achievements',
+                          style: Theme.of(context).textTheme.titleMedium
+                              ?.copyWith(fontWeight: FontWeight.bold),
+                        ),
                         const SizedBox(height: 12),
                         ...experience.achievements.map((achievement) {
                           return Padding(
@@ -305,9 +438,21 @@ class ExperienceSection extends StatelessWidget {
                             child: Row(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Icon(FontAwesomeIcons.trophy, size: 16, color: Colors.amber),
+                                FaIcon(
+                                  FontAwesomeIcons.trophy,
+                                  size: 16,
+                                  color: Colors.amber,
+                                ),
                                 const SizedBox(width: 12),
-                                Expanded(child: Text(achievement, style: Theme.of(context).textTheme.bodyMedium?.copyWith(height: 1.5))),
+                                Expanded(
+                                  child: Text(
+                                    achievement,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyMedium
+                                        ?.copyWith(height: 1.5),
+                                  ),
+                                ),
                               ],
                             ),
                           );
@@ -317,30 +462,48 @@ class ExperienceSection extends StatelessWidget {
 
                       // Technologies
                       if (experience.technologies.isNotEmpty) ...[
-                        Text('Technologies', style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
+                        Text(
+                          'Technologies',
+                          style: Theme.of(context).textTheme.titleMedium
+                              ?.copyWith(fontWeight: FontWeight.bold),
+                        ),
                         const SizedBox(height: 12),
                         Wrap(
                           spacing: 8,
                           runSpacing: 8,
                           children: experience.technologies.map((tech) {
                             return Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 6,
+                              ),
                               decoration: BoxDecoration(
-                                color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.primary.withOpacity(0.1),
                                 borderRadius: BorderRadius.circular(16),
-                                border: Border.all(color: Theme.of(context).colorScheme.primary.withOpacity(0.3)),
+                                border: Border.all(
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.primary.withOpacity(0.3),
+                                ),
                               ),
                               child: Text(
                                 tech,
-                                style: Theme.of(
-                                  context,
-                                ).textTheme.bodySmall?.copyWith(color: Theme.of(context).colorScheme.primary, fontWeight: FontWeight.w500),
+                                style: Theme.of(context).textTheme.bodySmall
+                                    ?.copyWith(
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.primary,
+                                      fontWeight: FontWeight.w500,
+                                    ),
                               ),
                             );
                           }).toList(),
                         ),
                       ],
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -351,13 +514,22 @@ class ExperienceSection extends StatelessWidget {
     );
   }
 
-  Widget _buildMetaItem(BuildContext context, IconData icon, String text) {
+  Widget _buildMetaItem(BuildContext context, FaIconData icon, String text) {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(icon, size: 14, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6)),
+        FaIcon(
+          icon,
+          size: 14,
+          color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+        ),
         const SizedBox(width: 6),
-        Text(text, style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7))),
+        Text(
+          text,
+          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+          ),
+        ),
       ],
     );
   }

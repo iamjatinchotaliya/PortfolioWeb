@@ -13,34 +13,27 @@ class HeroSection extends StatefulWidget {
   final PersonalInfo personalInfo;
   final Function(String) onNavigate;
 
-  const HeroSection({super.key, required this.personalInfo, required this.onNavigate});
+  const HeroSection({
+    super.key,
+    required this.personalInfo,
+    required this.onNavigate,
+  });
 
   @override
   State<HeroSection> createState() => _HeroSectionState();
 }
 
-class _HeroSectionState extends State<HeroSection> with SingleTickerProviderStateMixin {
+class _HeroSectionState extends State<HeroSection>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
-  int _currentTextIndex = 0;
-  final List<String> _rotatingTexts = ['Flutter Developer', 'Python Enthusiast', 'Full Stack Developer', 'Problem Solver', 'Creative Thinker'];
 
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(duration: const Duration(milliseconds: 2000), vsync: this)..repeat();
-
-    _startTextRotation();
-  }
-
-  void _startTextRotation() {
-    Future.delayed(const Duration(seconds: 3), () {
-      if (mounted) {
-        setState(() {
-          _currentTextIndex = (_currentTextIndex + 1) % _rotatingTexts.length;
-        });
-        _startTextRotation();
-      }
-    });
+    _controller = AnimationController(
+      duration: const Duration(milliseconds: 2000),
+      vsync: this,
+    )..repeat();
   }
 
   @override
@@ -61,21 +54,35 @@ class _HeroSectionState extends State<HeroSection> with SingleTickerProviderStat
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [Theme.of(context).scaffoldBackgroundColor, Theme.of(context).colorScheme.primary.withOpacity(0.05)],
+          colors: [
+            Theme.of(context).scaffoldBackgroundColor,
+            Theme.of(context).colorScheme.primary.withOpacity(0.05),
+          ],
         ),
       ),
       child: Center(
         child: Container(
-          constraints: BoxConstraints(maxWidth: AppConstants.maxWideContentWidth),
+          constraints: BoxConstraints(
+            maxWidth: AppConstants.maxWideContentWidth,
+          ),
           padding: ResponsiveHelper.getResponsivePadding(context),
-          child: isMobile || isTablet ? _buildMobileLayout() : _buildDesktopLayout(),
+          child: isMobile || isTablet
+              ? _buildMobileLayout()
+              : _buildDesktopLayout(),
         ),
       ),
     );
   }
 
   Widget _buildMobileLayout() {
-    return Column(mainAxisAlignment: MainAxisAlignment.center, children: [_buildAnimation(), const SizedBox(height: 48), _buildContent()]);
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        _buildAnimation(),
+        const SizedBox(height: 48),
+        _buildContent(),
+      ],
+    );
   }
 
   Widget _buildDesktopLayout() {
@@ -92,32 +99,52 @@ class _HeroSectionState extends State<HeroSection> with SingleTickerProviderStat
   Widget _buildContent() {
     return AnimationLimiter(
       child: Column(
-        crossAxisAlignment: ResponsiveHelper.isMobile(context) ? CrossAxisAlignment.center : CrossAxisAlignment.start,
+        crossAxisAlignment: ResponsiveHelper.isMobile(context)
+            ? CrossAxisAlignment.center
+            : CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: AnimationConfiguration.toStaggeredList(
           duration: const Duration(milliseconds: 500),
-          childAnimationBuilder: (widget) => SlideAnimation(verticalOffset: 50.0, child: FadeInAnimation(child: widget)),
+          childAnimationBuilder: (widget) => SlideAnimation(
+            verticalOffset: 50.0,
+            child: FadeInAnimation(child: widget),
+          ),
           children: [
             Text(
               'Hello, I\'m',
-              style: Theme.of(context).textTheme.headlineSmall?.copyWith(color: Theme.of(context).colorScheme.primary),
-              textAlign: ResponsiveHelper.isMobile(context) ? TextAlign.center : TextAlign.left,
+              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                color: Theme.of(context).colorScheme.primary,
+              ),
+              textAlign: ResponsiveHelper.isMobile(context)
+                  ? TextAlign.center
+                  : TextAlign.left,
             ),
             const SizedBox(height: 8),
             Text(
               widget.personalInfo.name,
               style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                fontSize: ResponsiveHelper.getResponsiveValue(context: context, mobile: 36, tablet: 48, desktop: 57),
+                fontSize: ResponsiveHelper.getResponsiveValue(
+                  context: context,
+                  mobile: 36,
+                  tablet: 48,
+                  desktop: 57,
+                ),
               ),
-              textAlign: ResponsiveHelper.isMobile(context) ? TextAlign.center : TextAlign.left,
+              textAlign: ResponsiveHelper.isMobile(context)
+                  ? TextAlign.center
+                  : TextAlign.left,
             ),
             const SizedBox(height: 16),
             _buildRotatingText(),
             const SizedBox(height: 24),
             Text(
               widget.personalInfo.tagline,
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(color: Theme.of(context).textTheme.bodyLarge?.color),
-              textAlign: ResponsiveHelper.isMobile(context) ? TextAlign.center : TextAlign.left,
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                color: Theme.of(context).textTheme.bodyLarge?.color,
+              ),
+              textAlign: ResponsiveHelper.isMobile(context)
+                  ? TextAlign.center
+                  : TextAlign.left,
             ),
             const SizedBox(height: 48),
             _buildActionButtons(),
@@ -138,21 +165,31 @@ class _HeroSectionState extends State<HeroSection> with SingleTickerProviderStat
           return FadeTransition(
             opacity: animation,
             child: SlideTransition(
-              position: Tween<Offset>(begin: const Offset(0, 0.3), end: Offset.zero).animate(animation),
+              position: Tween<Offset>(
+                begin: const Offset(0, 0.3),
+                end: Offset.zero,
+              ).animate(animation),
               child: child,
             ),
           );
         },
         child: Container(
-          key: ValueKey<int>(_currentTextIndex),
+          key: ValueKey<String>(widget.personalInfo.title),
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
           decoration: BoxDecoration(
-            gradient: LinearGradient(colors: AppTheme.primaryGradient.map((c) => c.withOpacity(0.2)).toList()),
+            gradient: LinearGradient(
+              colors: AppTheme.primaryGradient
+                  .map((c) => c.withOpacity(0.2))
+                  .toList(),
+            ),
             borderRadius: BorderRadius.circular(AppTheme.radiusMedium),
           ),
           child: Text(
-            _rotatingTexts[_currentTextIndex],
-            style: Theme.of(context).textTheme.headlineSmall?.copyWith(color: Theme.of(context).colorScheme.primary, fontWeight: FontWeight.w600),
+            widget.personalInfo.title,
+            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+              color: Theme.of(context).colorScheme.primary,
+              fontWeight: FontWeight.w600,
+            ),
           ),
         ),
       ),
@@ -163,34 +200,72 @@ class _HeroSectionState extends State<HeroSection> with SingleTickerProviderStat
     return Wrap(
       spacing: 16,
       runSpacing: 16,
-      alignment: ResponsiveHelper.isMobile(context) ? WrapAlignment.center : WrapAlignment.start,
+      alignment: ResponsiveHelper.isMobile(context)
+          ? WrapAlignment.center
+          : WrapAlignment.start,
       children: [
-        AnimatedButton(text: 'View Projects', onPressed: () => widget.onNavigate('projects'), icon: Icons.work_outline),
-        AnimatedButton(text: 'Contact Me', onPressed: () => widget.onNavigate('contact'), isPrimary: false, icon: Icons.email_outlined),
+        AnimatedButton(
+          text: 'View Projects',
+          onPressed: () => widget.onNavigate('projects'),
+          icon: Icons.work_outline,
+        ),
+        AnimatedButton(
+          text: 'Contact Me',
+          onPressed: () => widget.onNavigate('contact'),
+          isPrimary: false,
+          icon: Icons.email_outlined,
+        ),
       ],
     );
   }
 
   Widget _buildSocialLinks() {
     final socialLinks = [
-      {'icon': FontAwesomeIcons.github, 'url': widget.personalInfo.social.github, 'label': 'GitHub'},
-      {'icon': FontAwesomeIcons.linkedin, 'url': widget.personalInfo.social.linkedin, 'label': 'LinkedIn'},
-      {'icon': FontAwesomeIcons.xTwitter, 'url': widget.personalInfo.social.twitter, 'label': 'X'},
+      {
+        'icon': FontAwesomeIcons.github,
+        'url': widget.personalInfo.social.github,
+        'label': 'GitHub',
+      },
+      {
+        'icon': FontAwesomeIcons.linkedin,
+        'url': widget.personalInfo.social.linkedin,
+        'label': 'LinkedIn',
+      },
+      {
+        'icon': FontAwesomeIcons.xTwitter,
+        'url': widget.personalInfo.social.twitter,
+        'label': 'X',
+      },
     ];
 
     return Row(
-      mainAxisAlignment: ResponsiveHelper.isMobile(context) ? MainAxisAlignment.center : MainAxisAlignment.start,
-      children: socialLinks.map((link) {
-        return _SocialIconButton(onTap: () => UrlHelper.launchURL(link['url']! as String), icon: link['icon']! as IconData);
-      }).toList(),
+      mainAxisAlignment: ResponsiveHelper.isMobile(context)
+          ? MainAxisAlignment.center
+          : MainAxisAlignment.start,
+      children: socialLinks
+          .where((link) => (link['url'] as String).isNotEmpty)
+          .map((link) {
+            return _SocialIconButton(
+              onTap: () => UrlHelper.launchURL(link['url']! as String),
+              icon: link['icon']! as FaIconData,
+            );
+          })
+          .toList(),
     );
   }
 
   Widget _buildAnimation() {
-    final modelSize = ResponsiveHelper.getResponsiveValue(context: context, mobile: 250.0, tablet: 350.0, desktop: 450.0);
+    final modelSize = ResponsiveHelper.getResponsiveValue(
+      context: context,
+      mobile: 250.0,
+      tablet: 350.0,
+      desktop: 450.0,
+    );
 
     return Container(
-      constraints: BoxConstraints(maxHeight: ResponsiveHelper.isMobile(context) ? 350 : 550),
+      constraints: BoxConstraints(
+        maxHeight: ResponsiveHelper.isMobile(context) ? 350 : 550,
+      ),
       child: Center(
         child: Stack(
           alignment: Alignment.center,
@@ -202,10 +277,24 @@ class _HeroSectionState extends State<HeroSection> with SingleTickerProviderStat
                 return Transform.rotate(
                   angle: _controller.value * 2 * 3.14159,
                   child: Container(
-                    width: ResponsiveHelper.getResponsiveValue(context: context, mobile: 280, tablet: 380, desktop: 480),
-                    height: ResponsiveHelper.getResponsiveValue(context: context, mobile: 280, tablet: 380, desktop: 480),
+                    width: ResponsiveHelper.getResponsiveValue(
+                      context: context,
+                      mobile: 280,
+                      tablet: 380,
+                      desktop: 480,
+                    ),
+                    height: ResponsiveHelper.getResponsiveValue(
+                      context: context,
+                      mobile: 280,
+                      tablet: 380,
+                      desktop: 480,
+                    ),
                     decoration: BoxDecoration(
-                      gradient: LinearGradient(colors: AppTheme.primaryGradient.map((c) => c.withOpacity(0.1)).toList()),
+                      gradient: LinearGradient(
+                        colors: AppTheme.primaryGradient
+                            .map((c) => c.withOpacity(0.1))
+                            .toList(),
+                      ),
                       shape: BoxShape.circle,
                     ),
                   ),
@@ -216,7 +305,8 @@ class _HeroSectionState extends State<HeroSection> with SingleTickerProviderStat
             // Flip Card: Image -> 3D Model on tap
             FlipCard3D(
               imagePath: widget.personalInfo.avatar,
-              modelSrc: 'https://modelviewer.dev/shared-assets/models/Astronaut.glb',
+              modelSrc:
+                  'https://modelviewer.dev/shared-assets/models/Astronaut.glb',
               width: modelSize,
               height: modelSize,
               autoRotate: true,
@@ -233,7 +323,7 @@ class _HeroSectionState extends State<HeroSection> with SingleTickerProviderStat
 
 class _SocialIconButton extends StatefulWidget {
   final VoidCallback onTap;
-  final IconData icon;
+  final FaIconData icon;
 
   const _SocialIconButton({required this.onTap, required this.icon});
 
@@ -258,10 +348,18 @@ class _SocialIconButtonState extends State<_SocialIconButton> {
           width: 50,
           height: 50,
           decoration: BoxDecoration(
-            color: _isHovered ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.primary.withOpacity(0.1),
+            color: _isHovered
+                ? Theme.of(context).colorScheme.primary
+                : Theme.of(context).colorScheme.primary.withOpacity(0.1),
             shape: BoxShape.circle,
           ),
-          child: Icon(widget.icon, color: _isHovered ? Colors.white : Theme.of(context).colorScheme.primary, size: 24),
+          child: FaIcon(
+            widget.icon,
+            color: _isHovered
+                ? Colors.white
+                : Theme.of(context).colorScheme.primary,
+            size: 24,
+          ),
         ),
       ),
     );
