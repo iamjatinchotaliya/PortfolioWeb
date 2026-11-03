@@ -2,14 +2,12 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
+import '../../core/config/api_config.dart';
 
 /// Public API only. Admin credentials must never be embedded in the website.
 class PortfolioApiClient {
   PortfolioApiClient({
-    String baseUrl = const String.fromEnvironment(
-      'API_BASE_URL',
-      defaultValue: 'http://127.0.0.1:8000/api/v1',
-    ),
+    String baseUrl = ApiConfig.baseUrl,
     http.Client? client,
     this.timeout = const Duration(seconds: 15),
   }) : baseUrl = _normalizeBaseUrl(baseUrl),

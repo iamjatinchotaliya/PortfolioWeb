@@ -1,0 +1,157 @@
+{
+  "experience": [
+    {
+      "id": "1",
+      "company": "TechCorp Solutions",
+      "position": "Senior Full Stack Developer",
+      "location": "San Francisco, CA",
+      "type": "Full-time",
+      "startDate": "2021-06",
+      "endDate": null,
+      "current": true,
+      "logo": "assets/images/companies/techcorp.png",
+      "description": "Leading development of enterprise-scale applications serving millions of users. Architecting scalable microservices, mentoring junior developers, and driving technical decisions for multiple product teams.",
+      "responsibilities": [
+        "Led a team of 8 developers in building cloud-native applications",
+        "Architected and implemented microservices infrastructure reducing latency by 40%",
+        "Introduced CI/CD pipelines improving deployment frequency by 300%",
+        "Mentored 5 junior developers, with 3 promoted to mid-level roles",
+        "Collaborated with product and design teams on feature roadmaps"
+      ],
+      "achievements": [
+        "Received 'Innovation Award' for implementing AI-driven features",
+        "Reduced system downtime from 2% to 0.1%",
+        "Led successful migration of legacy systems to modern tech stack"
+      ],
+      "technologies": ["Flutter", "React", "Node.js", "AWS", "Docker", "Kubernetes"],
+      "website": "https://techcorp.example.com"
+    },
+    {
+      "id": "2",
+      "company": "InnovateLab",
+      "position": "Full Stack Developer",
+      "location": "Remote",
+      "type": "Full-time",
+      "startDate": "2019-03",
+      "endDate": "2021-05",
+      "current": false,
+      "logo": "assets/images/companies/innovatelab.png",
+      "description": "Developed cutting-edge web and mobile applications for startups and enterprise clients. Focused on rapid prototyping, MVP development, and iterative product improvements based on user feedback.",
+      "responsibilities": [
+        "Built 15+ web and mobile applications from concept to deployment",
+        "Collaborated directly with clients to understand requirements and deliver solutions",
+        "Implemented responsive designs and ensured cross-platform compatibility",
+        "Optimized application performance resulting in 50% faster load times",
+        "Conducted code reviews and maintained high code quality standards"
+      ],
+      "achievements": [
+        "Successfully delivered 12 projects ahead of schedule",
+        "Achieved 98% client satisfaction rating",
+        "Contributed to open-source projects with 500+ GitHub stars"
+      ],
+      "technologies": ["Flutter", "Vue.js", "Firebase", "Python", "PostgreSQL"],
+      "website": "https://innovatelab.example.com"
+    },
+    {
+      "id": "3",
+      "company": "Digital Dreams Agency",
+      "position": "Frontend Developer",
+      "location": "New York, NY",
+      "type": "Full-time",
+      "startDate": "2017-08",
+      "endDate": "2019-02",
+      "current": false,
+      "logo": "assets/images/companies/digitaldreams.png",
+      "description": "Created beautiful, responsive websites and interactive web applications for diverse clients including Fortune 500 companies, startups, and non-profits.",
+      "responsibilities": [
+        "Developed pixel-perfect, responsive websites for 30+ clients",
+        "Collaborated with UX designers to implement intuitive user interfaces",
+        "Integrated RESTful APIs and third-party services",
+        "Ensured accessibility compliance (WCAG 2.1 AA standards)",
+        "Maintained and updated existing client websites"
+      ],
+      "achievements": [
+        "Won 'Best Website Design' award for client project",
+        "Improved website performance scores to 95+ on Lighthouse",
+        "Trained 3 interns in modern web development practices"
+      ],
+      "technologies": ["React", "JavaScript", "HTML/CSS", "WordPress", "Sass"],
+      "website": "https://digitaldreams.example.com"
+    },
+    {
+      "id": "4",
+      "company": "StartupXYZ",
+      "position": "Junior Developer",
+      "location": "Boston, MA",
+      "type": "Full-time",
+      "startDate": "2016-06",
+      "endDate": "2017-07",
+      "current": false,
+      "logo": "assets/images/companies/startupxyz.png",
+      "description": "Gained foundational experience in software development working on various features of the company's SaaS platform. Learned best practices, agile methodologies, and professional software development workflows.",
+      "responsibilities": [
+        "Implemented new features for web-based SaaS application",
+        "Fixed bugs and improved application stability",
+        "Wrote unit tests to ensure code reliability",
+        "Participated in daily standups and sprint planning",
+        "Documented code and created technical documentation"
+      ],
+      "achievements": [
+        "Completed onboarding and became productive contributor within 2 weeks",
+        "Resolved 100+ bug tickets with 95% first-time resolution rate",
+        "Implemented feature that increased user engagement by 20%"
+      ],
+      "technologies": ["JavaScript", "jQuery", "PHP", "MySQL", "Bootstrap"],
+      "website": "https://startupxyz.example.com"
+    }
+  ],
+  "education": [
+    {
+      "id": "1",
+      "institution": "University of California, Berkeley",
+      "degree": "Bachelor of Science in Computer Science",
+      "field": "Computer Science",
+      "location": "Berkeley, CA",
+      "startDate": "2012-09",
+      "endDate": "2016-05",
+      "gpa": "3.8/4.0",
+      "logo": "assets/images/education/berkeley.png",
+      "description": "Focused on software engineering, algorithms, and artificial intelligence. Active member of the Computer Science Club and hackathon organizer.",
+      "achievements": [
+        "Dean's List all semesters",
+        "Graduated with Honors",
+        "Won 2 hackathons",
+        "Published research paper on machine learning"
+      ]
+    }
+  ],
+  "certifications": [
+    {
+      "id": "1",
+      "name": "AWS Certified Solutions Architect",
+      "issuer": "Amazon Web Services",
+      "date": "2022-03",
+      "credentialId": "AWS-SA-12345",
+      "logo": "assets/images/certifications/aws.png",
+      "url": "https://aws.amazon.com/certification/"
+    },
+    {
+      "id": "2",
+      "name": "Google Flutter Developer Certification",
+      "issuer": "Google",
+      "date": "2021-11",
+      "credentialId": "FLUTTER-12345",
+      "logo": "assets/images/certifications/flutter.png",
+      "url": "https://developers.google.com/certification/flutter"
+    },
+    {
+      "id": "3",
+      "name": "Professional Scrum Master I",
+      "issuer": "Scrum.org",
+      "date": "2020-08",
+      "credentialId": "PSM-12345",
+      "logo": "assets/images/certifications/scrum.png",
+      "url": "https://www.scrum.org/assessments/professional-scrum-master-i-certification"
+    }
+  ]
+}

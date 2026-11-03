@@ -16,10 +16,10 @@ Use the backend README's migration/setup steps for a fresh database. Do not rese
 ```powershell
 cd 'C:\Jatin\Flutter projects\PortfolioWeb'
 flutter pub get
-flutter run -d chrome --web-hostname localhost --web-port 3000 --dart-define=API_BASE_URL=http://127.0.0.1:8000/api/v1
+flutter run -d chrome --web-hostname localhost --web-port 3000
 ```
 
-The default API address is already `http://127.0.0.1:8000/api/v1`. Include `/api/v1` in overrides; a trailing slash is optional. Restart/rebuild Flutter after changing the address.
+The API address is controlled in one place: [`lib/core/config/api_config.dart`](lib/core/config/api_config.dart). Set `ApiConfig.environment` to `ApiEnvironment.local` for `http://127.0.0.1:8000/api/v1` or `ApiEnvironment.live` for `http://140.245.23.252:8080/api/v1`. Restart/rebuild Flutter after changing it.
 
 The backend must allow the exact frontend origin in `CORS_ORIGINS`. Its existing local configuration allows `http://localhost:3000`. `http://127.0.0.1:3000` is a different origin. Changing this backend setting requires restarting the API.
 
@@ -38,10 +38,10 @@ Errors offer retry and failed requests are not permanently cached. Contact error
 ## Deployment
 
 ```powershell
-flutter build web --release --dart-define=API_BASE_URL=https://your-api.example.com/api/v1
+flutter build web --release
 ```
 
-Use the deployed backend's HTTPS URL and allow the deployed website origin in backend CORS. A remote visitor's `localhost` points to their own computer. For Android emulators use `http://10.0.2.2:8000/api/v1`; physical devices need a reachable backend LAN or HTTPS address and platform network permissions. This integration is verified for Flutter web.
+Before building for deployment, set `ApiConfig.environment` to `ApiEnvironment.live` in [`lib/core/config/api_config.dart`](lib/core/config/api_config.dart). A remote visitor's `localhost` points to their own computer. For Android emulators use `http://10.0.2.2:8000/api/v1`; physical devices need a reachable backend LAN or HTTPS address and platform network permissions. This integration is verified for Flutter web.
 
 ## Checks
 

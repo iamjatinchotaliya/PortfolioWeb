@@ -5,6 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 import 'package:portfolioweb/data/repositories/data_repository.dart';
 import 'package:portfolioweb/data/services/portfolio_api_client.dart';
+import 'package:portfolioweb/core/config/api_config.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:portfolioweb/presentation/providers/contact_form_provider.dart';
 import 'package:portfolioweb/presentation/providers/portfolio_provider.dart';
@@ -26,6 +27,12 @@ Map<String, dynamic> portfolioFixture() => {
 };
 
 void main() {
+  test('API configuration exposes the local and live server URLs', () {
+    expect(ApiConfig.localBaseUrl, 'http://127.0.0.1:8000/api/v1');
+    expect(ApiConfig.liveBaseUrl, 'http://140.245.23.252:8080/api/v1');
+    expect(ApiConfig.baseUrl, ApiConfig.liveBaseUrl);
+  });
+
   test(
     'concurrent sections share one request; clearCache fetches again',
     () async {
